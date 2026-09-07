@@ -112,7 +112,9 @@
 .ta-lib .orbit .hub { position: absolute; z-index: 3; left: 50%; top: 50%;
   transform: translate(-50%,-50%); text-align: center; pointer-events: none; width: 58%; }
 .ta-lib .hub .k { font-family: var(--head); font-size: 10px; font-weight: 700;
-  letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+  letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.55);
+  transition: color .4s var(--ease); }
+.ta-lib .hub .k[data-done="1"] { color: var(--accent); }
 .ta-lib .hub .n { font-family: var(--head); font-size: clamp(44px,5vw,74px); font-weight: 800;
   color: #EFF1FF; letter-spacing: -.05em; line-height: 1; margin-top: 6px;
   font-variant-numeric: tabular-nums; text-shadow: 0 0 34px rgba(68,199,244,.35); }
@@ -329,9 +331,9 @@
         <div class="orbit" id="orbit">
           <canvas id="path" aria-hidden="true"></canvas>
           <div class="hub">
-            <div class="k">Guides Collected</div>
+            <div class="k" id="hK" data-done="0">Parts In Place</div>
             <div class="n" id="hN">00<span>/11</span></div>
-            <div class="s" id="hS">Launching</div>
+            <div class="s" id="hS">Profile</div>
             <div class="bar" id="hBar"></div>
           </div>
         </div>
@@ -521,13 +523,15 @@
     });
   });
 
-  /* ── the comet run ───────────────────────────────────── */
-  // A real comet: an irregular nucleus, a coma built from particles rather than a
-  // soft blob, and TWO tails — a broad curved dust tail and a narrow ion tail that
-  // points away from the hub, which is how a comet actually behaves. It lives in a
-  // dark viewport because an additive coma and tail only exist against darkness.
+  /* ── the assembly run ────────────────────────────────── */
+  // The analogy is ASSEMBLY, not collection. The ring starts as eleven separate
+  // arc segments floating apart from each other — visibly not a thing yet. The
+  // comet flies the path and seats each segment as it passes, in order, until
+  // the eleven close into one complete ring. An open ring reads as incomplete;
+  // a closed one reads as a system.
   //
-  // The flight IS the content here, so the loop runs on every machine. Windows
+  // It lives in a dark viewport because a coma and a tail are additive light and
+  // do not exist against white. The loop runs on every machine: Windows
   // "Animation effects: off" reports prefers-reduced-motion and froze an earlier build.
   var STAGES = [
     { n:'Profile', g:2 }, { n:'Content', g:3 }, { n:'Engagement', g:1 },
@@ -541,7 +545,8 @@
   var N = GUIDE_STAGE.length;
 
   var host = document.getElementById('orbit'), cv = document.getElementById('path');
-  var hN = document.getElementById('hN'), hS = document.getElementById('hS'), hBar = document.getElementById('hBar');
+  var hK = document.getElementById('hK'), hN = document.getElementById('hN'),
+      hS = document.getElementById('hS'), hBar = document.getElementById('hBar');
   var segs = STAGES.map(function () { var i = document.createElement('i'); hBar.appendChild(i); return i; });
   var chips = STAGES.map(function (s) {
     var d = document.createElement('div'); d.className = 'chip'; d.textContent = s.n;
@@ -558,39 +563,47 @@
   camera.position.set(0, Math.sin(TILT) * CAM_D, Math.cos(TILT) * CAM_D);
   camera.lookAt(0, 0, 0);
 
-  var R = 4.0, A0 = -Math.PI / 2;        // stop 01 sits at 12 o'clock, running clockwise
+  var R = 4.0, A0 = -Math.PI / 2;        // part 01 sits at 12 o'clock, running clockwise
   var CYAN = 0x44C7F4;
   function ang(t) { return A0 + t * Math.PI * 2; }
 
-  function band(rad, halfW, seg) {      // real ribbon geometry: gl.LINES is 1px and aliased
-    var g = new THREE.BufferGeometry(), pos = [], tt = [], idx = [];
+  function arc(fromT, toT, rad, halfW, seg) {
+    var g = new THREE.BufferGeometry(), pos = [], idx = [];
     for (var i = 0; i <= seg; i++) {
-      var f = i / seg, a = ang(f), c = Math.cos(a), s = Math.sin(a);
+      var f = fromT + (toT - fromT) * (i / seg), a = ang(f), c = Math.cos(a), s = Math.sin(a);
       pos.push((rad - halfW) * c, 0, (rad - halfW) * s, (rad + halfW) * c, 0, (rad + halfW) * s);
-      tt.push(f, f);
       if (i < seg) { var b = i * 2; idx.push(b, b + 1, b + 2, b + 1, b + 3, b + 2); }
     }
     g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-    g.setAttribute('aT', new THREE.Float32BufferAttribute(tt, 1));
     g.setIndex(idx); return g;
   }
 
-  var laneMat = new THREE.ShaderMaterial({
-    transparent: true, depthWrite: false, side: THREE.DoubleSide,
-    uniforms: { uHead: { value: 0 }, uCol: { value: new THREE.Color(CYAN) } },
-    vertexShader: 'attribute float aT; varying float vT;' +
-      'void main(){ vT=aT; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
-    fragmentShader: 'varying float vT; uniform float uHead; uniform vec3 uCol;' +
-      'void main(){ float done = 1.0 - smoothstep(uHead-0.004, uHead+0.0015, vT);' +
-      ' gl_FragColor = vec4(uCol, mix(0.20,0.95,done)); }'
+  /* ── the eleven parts ── */
+  var GAP = 0.008;                        // the seam that makes them read as separate pieces
+  var parts = [], seat = new Float32Array(N);
+  for (var i = 0; i < N; i++) {
+    var m = new THREE.Mesh(arc(i / N + GAP, (i + 1) / N - GAP, R, 0.055, 48),
+      new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: .12, side: THREE.DoubleSide }));
+    m.renderOrder = 2; scene.add(m); parts.push(m);
+  }
+  // two hairline guide rings, so the empty state still reads as an instrument
+  [R * 1.17, R * 0.66].forEach(function (rr) {
+    var g = new THREE.Mesh(arc(0, 1, rr, 0.004, 240),
+      new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: .08, side: THREE.DoubleSide }));
+    scene.add(g);
   });
-  scene.add(new THREE.Mesh(band(R, 0.035, 512), laneMat));
-  scene.add(new THREE.Mesh(band(R * 1.16, 0.004, 256),
-    new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: .10, side: THREE.DoubleSide })));
-  scene.add(new THREE.Mesh(band(R * 0.66, 0.004, 256),
-    new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: .08, side: THREE.DoubleSide })));
+  // a station tick at every seam, so you can see where a part still has to go
+  var ticks = [];
+  for (var i = 0; i < N; i++) {
+    var a = ang(i / N);
+    var t = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.012),
+      new THREE.MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, opacity: .18, side: THREE.DoubleSide }));
+    t.rotation.x = -Math.PI / 2; t.rotation.z = -a;
+    t.position.set(Math.cos(a) * (R + 0.34), 0, Math.sin(a) * (R + 0.34));
+    scene.add(t); ticks.push(t);
+  }
 
-  /* ── a crisp point shader used for stars, coma and both tails ── */
+  /* ── a crisp point shader for stars, coma and both tails ── */
   function pointMat(scale, alpha) {
     return new THREE.ShaderMaterial({
       transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
@@ -618,7 +631,7 @@
     });
   }
 
-  /* ── the star field, static and faint ── */
+  /* ── the star field ── */
   var SF = 420, sg = new THREE.BufferGeometry();
   var sp = new Float32Array(SF * 3), sa = new Float32Array(SF), ss = new Float32Array(SF), sk = new Float32Array(SF);
   for (var i = 0; i < SF; i++) {
@@ -632,21 +645,7 @@
   sg.setAttribute('aKind', new THREE.BufferAttribute(sk, 1));
   scene.add(new THREE.Points(sg, pointMat(9.0, 0.5)));
 
-  /* ── the guide markers ── */
-  var pods = [], glows = [];
-  var podGeo = new THREE.RingGeometry(0.105, 0.145, 40), glowGeo = new THREE.CircleGeometry(0.30, 36);
-  for (var i = 0; i < N; i++) {
-    var a = ang(i / N), x = Math.cos(a) * R, z = Math.sin(a) * R;
-    var pod = new THREE.Mesh(podGeo, new THREE.MeshBasicMaterial({
-      color: 0xFFFFFF, transparent: true, opacity: .30 }));
-    var glow = new THREE.Mesh(glowGeo, new THREE.MeshBasicMaterial({
-      color: CYAN, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
-    pod.rotation.x = -Math.PI / 2; pod.position.set(x, 0.004, z); pod.renderOrder = 4;
-    glow.rotation.x = -Math.PI / 2; glow.position.set(x, 0.003, z); glow.renderOrder = 3;
-    scene.add(pod); scene.add(glow); pods.push(pod); glows.push(glow);
-  }
-
-  /* ── the nucleus: a small irregular body, not a disc ── */
+  /* ── the nucleus ── */
   var nucGeo = new THREE.IcosahedronGeometry(0.20, 1);
   var np = nucGeo.attributes.position;
   for (var i = 0; i < np.count; i++) {                       // rough it up so it reads as rock
@@ -689,9 +688,9 @@
       var th = t0h + (t1h - t0h) * u;                 // sub-frame position along the arc
       var aa = ang(th), x = Math.cos(aa) * R, z = Math.sin(aa) * R;
       var tx = -Math.sin(aa), tz = Math.cos(aa);
-      var ox = Math.cos(aa), oz = Math.sin(aa);      // outward from the hub
+      var ox = Math.cos(aa), oz = Math.sin(aa);       // outward from the hub
       var ion = Math.random() < 0.34;
-      var slow = Math.random() < 0.06;                                   // these stay and form the coma
+      var slow = Math.random() < 0.06;                // these stay and form the coma
       var back = slow ? 0.05 : (ion ? 2.90 : 1.90) * (0.6 + Math.random() * 0.8) * boost;
       var out  = slow ? 0.04 : (ion ? 0.60 : 0.10) * (0.5 + Math.random());
       var jit  = slow ? 0.11 : (ion ? 0.03 : 0.34);
@@ -718,16 +717,15 @@
   }
   window.addEventListener('resize', size); size();
 
-  var LAP = 30, head = 0, collected = 0, lastStage = -1, lastIdx = -1;
-  var pulse = new Array(N).fill(0), proj = new THREE.Vector3(), t0 = performance.now();
-  var prevHead = 0;
-  var lastCount = -1, hSuffix = document.createElement('span');
-  hSuffix.textContent = '/11';
+  var LAP = 30, head = 0, seated = 0, lastStage = -1, lastIdx = -1;
+  var proj = new THREE.Vector3(), t0 = performance.now(), prevHead = 0;
+  var hold = 0, lastCount = -1, complete = false;
+  var hSuffix = document.createElement('span'); hSuffix.textContent = '/11';
 
   function placeChips() {
     var w = host.clientWidth, h = host.clientHeight;
     STAGE_FIRST.forEach(function (gi, si) {
-      var a = ang(gi / N);
+      var a = ang((gi + 0.5) / N);
       proj.set(Math.cos(a) * R * 1.22, 0, Math.sin(a) * R * 1.22).project(camera);
       var cw = chips[si].offsetWidth / 2 + 3, ch = chips[si].offsetHeight / 2 + 3;
       chips[si].style.left = Math.max(cw, Math.min(w - cw, (proj.x * .5 + .5) * w)) + 'px';
@@ -743,37 +741,62 @@
     // performance.now(), so dt arrives negative. Clamp both ends.
     var dt = Math.min(Math.max((now - t0) / 1000, 0), .05); t0 = now;
 
-    var local = (head * N) % 1;
-    var speed = 0.46 + 0.54 * Math.pow(Math.sin(local * Math.PI), 0.8);
-    head = (head + (dt / LAP) * speed) % 1;
-    if (head < 0) head += 1;
-    var idx = ((Math.floor(head * N) % N) + N) % N;
-
-    var a = ang(head), x = Math.cos(a) * R, z = Math.sin(a) * R;
-    var tx = -Math.sin(a), tz = Math.cos(a);                 // direction of travel
-
-    if (idx !== lastIdx) {
-      if (lastIdx !== -1) { pulse[lastIdx] = 1; emit(head, head, 150, 1.8); }    // pickup flare
-      lastIdx = idx; collected = idx;
-      if (idx === 0) { pulse.fill(0); collected = 0; }
+    if (hold > 0) {                    // the finished ring holds, whole, before it resets
+      hold -= dt;
+      if (hold <= 0) {
+        for (var i = 0; i < N; i++) seat[i] = 0;
+        head = 0; prevHead = 0; seated = 0; lastIdx = -1; lastStage = -1;
+        lastCount = -1; complete = false;
+      }
+    } else {
+      var local = (head * N) % 1;
+      var speed = 0.46 + 0.54 * Math.pow(Math.sin(local * Math.PI), 0.8);
+      head = (head + (dt / LAP) * speed) % 1;
+      if (head < 0) head += 1;
     }
-    laneMat.uniforms.uHead.value = head;
 
-    nucleus.position.set(x, 0, z);
-    nucleus.rotation.x += dt * 1.1; nucleus.rotation.y += dt * 1.6;
-    halo.position.set(x, 0.001, z);
-    halo.scale.setScalar(0.94 + Math.sin(now / 300) * 0.06);
+    var idx = ((Math.floor(head * N) % N) + N) % N;
+    var a = ang(head), x = Math.cos(a) * R, z = Math.sin(a) * R;
 
-    var span = head - prevHead; if (span < -0.5) span += 1;   // the arc covered this frame
-    emit(prevHead, prevHead + span, Math.round(86 + 74 * speed), 1);
-    prevHead = head;
+    if (!complete && idx !== lastIdx) {
+      if (lastIdx !== -1) emit(head, head, 150, 1.8);       // the part snaps home
+      if (lastIdx === N - 1 && idx === 0) {                 // the eleventh closed the ring
+        seated = N; complete = true; hold = 2.6;
+      } else {
+        lastIdx = idx; seated = idx;
+      }
+    }
+
+    // seat every part the comet has already passed; the rest float outside the ring
+    for (var i = 0; i < N; i++) {
+      var want = i < seated ? 1 : 0;
+      seat[i] += (want - seat[i]) * Math.min(1, dt * 7.5);
+      var s = seat[i];
+      parts[i].scale.setScalar(1 + 0.115 * (1 - s));         // slides in radially
+      parts[i].position.y = 0.55 * (1 - s);                  // and drops into the plane
+      parts[i].material.opacity = 0.12 + 0.83 * s;
+      ticks[i].material.opacity = 0.18 + 0.5 * s;
+    }
+
+    if (!complete) {
+      nucleus.visible = halo.visible = true;
+      nucleus.position.set(x, 0, z);
+      nucleus.rotation.x += dt * 1.1; nucleus.rotation.y += dt * 1.6;
+      halo.position.set(x, 0.001, z);
+      halo.scale.setScalar(0.94 + Math.sin(now / 300) * 0.06);
+      var span = head - prevHead; if (span < -0.5) span += 1;   // the arc covered this frame
+      emit(prevHead, prevHead + span, Math.round(86 + 74 * speed), 1);
+      prevHead = head;
+    } else {
+      nucleus.visible = halo.visible = false;                 // the ring is the subject now
+    }
 
     for (var i = 0; i < P; i++) {
       if (age[i] >= life[i]) { pAge[i] = 1; continue; }
       age[i] += dt;
       var px = pPos[i*3], pz = pPos[i*3+2];
       var rl = Math.sqrt(px * px + pz * pz) || 1;
-      var push = (pKind[i] > .5 ? 2.0 : 0.26) * dt;         // solar wind, straight out from the hub
+      var push = (pKind[i] > .5 ? 2.0 : 0.26) * dt;          // solar wind, straight out from the hub
       vx[i] += (px / rl) * push; vz[i] += (pz / rl) * push;
       var drag = 1 - (pKind[i] > .5 ? 0.07 : 0.12) * dt;
       vx[i] *= drag; vy[i] *= drag; vz[i] *= drag;
@@ -787,26 +810,21 @@
     pg.attributes.aSize.needsUpdate = true;
     pg.attributes.aKind.needsUpdate = true;
 
-    for (var i = 0; i < N; i++) {
-      var got = i < collected;
-      pods[i].material.color.setHex(got ? CYAN : 0xFFFFFF);
-      pods[i].material.opacity = got ? .95 : .30;
-      if (pulse[i] > 0) pulse[i] = Math.max(0, pulse[i] - dt * 1.5);
-      glows[i].material.opacity = (got ? .16 : 0) + pulse[i] * .55;
-      glows[i].scale.setScalar(1 + (1 - pulse[i]) * pulse[i] * 2.4);
-    }
-
-    var si = GUIDE_STAGE[idx];
-    if (si !== lastStage) {
-      lastStage = si; hS.textContent = STAGES[si].n;
-      segs.forEach(function (el, k) { el.dataset.on = k <= si ? '1' : '0'; });
+    var si = complete ? STAGES.length - 1 : GUIDE_STAGE[idx];
+    if (si !== lastStage || complete !== (hK.dataset.done === '1')) {
+      lastStage = si;
+      hK.dataset.done = complete ? '1' : '0';
+      hK.textContent = complete ? 'One Complete System' : 'Parts In Place';
+      hS.textContent = complete ? 'All Seven Stages' : STAGES[si].n;
+      segs.forEach(function (el, k) { el.dataset.on = (complete || k <= si) ? '1' : '0'; });
       chips.forEach(function (el, k) {
-        el.dataset.on = k === si ? '1' : '0'; el.dataset.done = k < si ? '1' : '0';
+        el.dataset.on = (!complete && k === si) ? '1' : '0';
+        el.dataset.done = (complete || k < si) ? '1' : '0';
       });
     }
-    if (collected !== lastCount) {
-      lastCount = collected;
-      hN.textContent = String(collected).padStart(2, '0');
+    if (seated !== lastCount) {
+      lastCount = seated;
+      hN.textContent = String(seated).padStart(2, '0');
       hN.appendChild(hSuffix);
     }
 
