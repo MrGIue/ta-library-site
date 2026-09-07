@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direction A — The Sequence Engine</title>
+<meta name="description" content="Concept direction A for the Trained Advisor Library: a live WebGL signal ring where the eleven guides ignite in sequence.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,500;0,600;0,700;0,800;1,800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="concept.css">
+<style>
+.hero {
+  position: relative;
+  min-height: min(94vh, 940px);
+  display: flex; align-items: center;
+  padding: 116px 0 92px;
+  isolation: isolate;
+}
+/* a canvas is a replaced element: inset:0 alone leaves it at its intrinsic
+   300x150 and lets the width attribute overflow the viewport. Size it explicitly. */
+#stage { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; }
+.scrim {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    linear-gradient(100deg, var(--ta-bg) 0%, rgba(14,27,48,.92) 28%, rgba(14,27,48,.38) 48%, rgba(14,27,48,0) 64%),
+    linear-gradient(0deg, var(--ta-bg) 0%, rgba(14,27,48,0) 24%);
+}
+.hero .wrap { position: relative; z-index: 2; }
+.hero h1 { font-size: clamp(44px, 6.2vw, 92px); max-width: 15ch; }
+.hero h1 .l2 { display: block; }
+
+/* the live readout — the ring's own telemetry, not decoration */
+.readout {
+  margin-top: 46px; display: inline-flex; align-items: stretch;
+  border: 1px solid var(--ta-border); border-radius: 14px;
+  background: rgba(10,22,40,.66); backdrop-filter: blur(8px);
+  overflow: hidden;
+}
+.readout .cell { padding: 15px 22px; border-right: 1px solid var(--ta-border); }
+.readout .cell:last-child { border-right: 0; }
+.readout .k {
+  font-family: var(--ta-font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--ta-dim);
+  display: block; margin-bottom: 5px;
+}
+.readout .v {
+  font-family: var(--ta-font-head); font-size: 17px; font-weight: 700;
+  color: var(--ta-heading); font-variant-numeric: tabular-nums;
+  display: block; min-width: 6ch;
+}
+.readout .v.on { color: var(--ta-accent); }
+
+.below { padding: 0 0 130px; }
+.below .rule { height: 1px; background: linear-gradient(90deg, rgba(68,199,244,.3), rgba(68,199,244,0)); margin-bottom: 54px; }
+.below h2 { font-size: clamp(26px, 3vw, 40px); max-width: 22ch; }
+.below p { max-width: 60ch; margin: 20px 0 0; }
+
+@media (max-width: 900px) {
+  .hero { min-height: auto; padding: 96px 0 110px; }
+  .scrim { background: linear-gradient(180deg, rgba(14,27,48,.62) 0%, rgba(14,27,48,.9) 55%, var(--ta-bg) 100%); }
+  .readout { display: flex; width: 100%; }
+  .readout .cell { flex: 1; padding: 13px 14px; }
+  .readout .v { font-size: 15px; min-width: 0; }
+}
+</style>
+</head>
+<body>
+
+<main>
+  <section class="hero">
+    <canvas id="stage" aria-hidden="true"></canvas>
+    <div class="scrim"></div>
+    <div class="wrap">
+      <p class="eyebrow">LinkedIn Marketing For Financial Advisors</p>
+      <h1>Stop Collecting LinkedIn Advice.<em class="l2">Start Running The Sequence.</em></h1>
+      <p class="lede">Eleven playbooks we run for advisors ourselves, arranged in the one order that makes them work. Profile, content, engagement, prospecting, offers, objections, proof.</p>
+      <div class="cta-row">
+        <a class="btn" href="#inside">Get The Library — $27</a>
+        <a class="btn-ghost" href="#inside">See What Is Inside</a>
+      </div>
+      <div class="readout" role="status" aria-live="off">
+        <div class="cell"><span class="k">Stage</span><span class="v" id="rStage">01 / 07</span></div>
+        <div class="cell"><span class="k">Running</span><span class="v on" id="rName">Profile</span></div>
+        <div class="cell"><span class="k">Guides</span><span class="v" id="rCount">2</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="below" id="inside">
+    <div class="wrap">
+      <div class="rule"></div>
+      <h2>The Order Is The Product.</h2>
+      <p>Eleven separate downloads give an advisor eleven starting points, which is the same as none. The Library is the same eleven documents with the argument put back in: what to fix first, what only works after that, and what to stop doing until the step before it is done.</p>
+    </div>
+  </section>
+</main>
+
+<nav class="sw" aria-label="Concept directions">
+  <b>Direction</b>
+  <a href="a.html" aria-current="page">A <span>Sequence Engine</span></a>
+  <a href="b.html">B <span>Signal Desk</span></a>
+  <a href="c.html">C <span>Blueprint</span></a>
+</nav>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
+        integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+(function () {
+  var cv = document.getElementById('stage');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var STAGES = [
+    { n: 'Profile',     g: 2 },
+    { n: 'Content',     g: 3 },
+    { n: 'Engagement',  g: 1 },
+    { n: 'Prospecting', g: 1 },
+    { n: 'Offers',      g: 2 },
+    { n: 'Objections',  g: 1 },
+    { n: 'Proof',       g: 1 }
+  ];
+  // one node per guide, tagged with the stage it belongs to
+  var NODES = [];
+  STAGES.forEach(function (s, si) { for (var i = 0; i < s.g; i++) NODES.push(si); });
+  var N = NODES.length; // 11
+
+  var elStage = document.getElementById('rStage'),
+      elName  = document.getElementById('rName'),
+      elCount = document.getElementById('rCount');
+
+  if (!window.THREE) { cv.style.display = 'none'; return; }
+
+  var renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+  camera.position.set(0, 4.2, 12.0);
+  camera.lookAt(0, 0, 0);
+
+  var group = new THREE.Group();
+  group.rotation.x = 0.26;
+  scene.add(group);
+
+  var R = 3.95, TILT = 0.30;
+  function pos(t) { // t in [0,1) around the ring
+    var a = t * Math.PI * 2;
+    return new THREE.Vector3(Math.cos(a) * R, Math.sin(a * 2) * TILT, Math.sin(a) * R);
+  }
+
+  // ── the track: a thin closed line, not a glow band
+  var tp = [];
+  for (var i = 0; i <= 360; i++) tp.push(pos(i / 360));
+  var track = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(tp),
+    new THREE.LineBasicMaterial({ color: 0x44C7F4, transparent: true, opacity: 0.46 })
+  );
+  group.add(track);
+
+  // ── the eleven nodes: crisp small squares, sharpened by a ring sprite, never a soft blob
+  var nodeGeo = new THREE.BufferGeometry();
+  var np = new Float32Array(N * 3), nsize = new Float32Array(N), nlit = new Float32Array(N);
+  var nodeT = [];
+  for (var i = 0; i < N; i++) {
+    var t = i / N; nodeT.push(t);
+    var p = pos(t);
+    np[i * 3] = p.x; np[i * 3 + 1] = p.y; np[i * 3 + 2] = p.z;
+    nsize[i] = 13; nlit[i] = 0;
+  }
+  nodeGeo.setAttribute('position', new THREE.BufferAttribute(np, 3));
+  nodeGeo.setAttribute('aLit', new THREE.BufferAttribute(nlit, 1));
+
+  var nodeMat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: { uPR: { value: Math.min(window.devicePixelRatio || 1, 2) } },
+    vertexShader:
+      'attribute float aLit; varying float vLit; uniform float uPR;' +
+      'void main(){ vLit=aLit; vec4 mv=modelViewMatrix*vec4(position,1.0);' +
+      'gl_PointSize=(15.0+aLit*22.0)*uPR*(12.0/-mv.z); gl_Position=projectionMatrix*mv; }',
+    fragmentShader:
+      'varying float vLit;' +
+      'void main(){ vec2 c=gl_PointCoord-0.5; float d=length(c);' +
+      'float core=smoothstep(0.30,0.16,d);' +            /* hard crisp core */
+      'float ring=smoothstep(0.50,0.42,d)-smoothstep(0.42,0.34,d);' + /* thin ring, no bloom blob */
+      'float a=core*(0.55+vLit*0.45)+ring*(0.45+vLit*0.55);' +
+      'if(a<0.01) discard;' +
+      'vec3 col=mix(vec3(0.34,0.68,0.86), vec3(0.60,0.92,1.0), vLit);' +
+      'gl_FragColor=vec4(col,a); }'
+  });
+  group.add(new THREE.Points(nodeGeo, nodeMat));
+
+  // ── the pulse: a short bright arc that travels the ring in stage order
+  var PULSE = 40;
+  var pulseGeo = new THREE.BufferGeometry();
+  var pp = new Float32Array(PULSE * 3), pl = new Float32Array(PULSE);
+  for (var i = 0; i < PULSE; i++) pl[i] = 1 - i / PULSE;
+  pulseGeo.setAttribute('position', new THREE.BufferAttribute(pp, 3));
+  pulseGeo.setAttribute('aLit', new THREE.BufferAttribute(pl, 1));
+  var pulse = new THREE.Points(pulseGeo, nodeMat.clone());
+  group.add(pulse);
+
+  // ── field: fine crisp specks for depth, deliberately sparse
+  var F = 260;
+  var fg = new THREE.BufferGeometry(), fp = new Float32Array(F * 3), fl = new Float32Array(F);
+  for (var i = 0; i < F; i++) {
+    var r = 6 + Math.random() * 12, a = Math.random() * Math.PI * 2;
+    fp[i * 3] = Math.cos(a) * r;
+    fp[i * 3 + 1] = (Math.random() - 0.5) * 9;
+    fp[i * 3 + 2] = Math.sin(a) * r;
+    fl[i] = 0;
+  }
+  fg.setAttribute('position', new THREE.BufferAttribute(fp, 3));
+  fg.setAttribute('aLit', new THREE.BufferAttribute(fl, 1));
+  var field = new THREE.Points(fg, nodeMat.clone());
+  field.material.uniforms.uPR.value = Math.min(window.devicePixelRatio || 1, 2) * 0.4;
+  group.add(field);
+
+  function size() {
+    var w = cv.clientWidth, h = cv.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    // pull the ring right of centre on wide screens so the type owns the left
+    var halfH = 12.0 * Math.tan(camera.fov * Math.PI / 360), halfW = halfH * (w / h);
+    group.position.x = w > 900 ? Math.min(2.4, Math.max(0, halfW - 3.95 * 0.92)) : 0;
+    camera.fov = w > 900 ? 46 : 60;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', size); size();
+
+  var mx = 0, my = 0;
+  window.addEventListener('pointermove', function (e) {
+    mx = (e.clientX / window.innerWidth - 0.5);
+    my = (e.clientY / window.innerHeight - 0.5);
+  }, { passive: true });
+
+  var head = 0, last = -1, t0 = performance.now();
+  function frame(now) {
+    var dt = Math.min((now - t0) / 1000, 0.05); t0 = now;
+    if (!reduced) head = (head + dt * 0.072) % 1;
+
+    group.rotation.y += dt * 0.09;
+    group.rotation.x += ((0.26 + my * 0.12) - group.rotation.x) * 0.045;
+    group.position.z = mx * 0.7;
+
+    // light each node as the head passes it, then let it decay
+    var lit = nodeGeo.attributes.aLit;
+    for (var i = 0; i < N; i++) {
+      var d = Math.abs(((head - nodeT[i]) % 1 + 1) % 1);
+      var near = d < 0.035 ? 1 : Math.max(0, 1 - (d - 0.035) * 4.5);
+      lit.array[i] += (near - lit.array[i]) * (near > lit.array[i] ? 0.35 : 0.035);
+    }
+    lit.needsUpdate = true;
+
+    var parr = pulseGeo.attributes.position.array;
+    for (var i = 0; i < PULSE; i++) {
+      var p = pos(((head - i * 0.0016) % 1 + 1) % 1);
+      parr[i * 3] = p.x; parr[i * 3 + 1] = p.y; parr[i * 3 + 2] = p.z;
+    }
+    pulseGeo.attributes.position.needsUpdate = true;
+
+    var idx = Math.floor(head * N) % N, si = NODES[idx];
+    if (si !== last) {
+      last = si;
+      elStage.textContent = String(si + 1).padStart(2, '0') + ' / 07';
+      elName.textContent = STAGES[si].n;
+      elCount.textContent = String(STAGES[si].g);
+    }
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
