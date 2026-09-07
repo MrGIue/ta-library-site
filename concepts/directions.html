@@ -1,0 +1,671 @@
+<title>Library Site Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,500;0,600;0,700;0,800;1,800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+/* ═══ TRAINED ADVISOR CANONICAL TOKENS v1.0 (2026-07-01) ═══
+   Source: BRAND-BIBLE.md §7 — do not edit values, ever. */
+:root {
+  --ta-bg-deep:#0A1628; --ta-bg:#0E1B30; --ta-panel:#121F36;
+  --ta-cta:#00A1D3; --ta-cta-hover:#0088B5; --ta-accent:#44C7F4;
+  --ta-accent-hover:#5DD4FA; --ta-link:#0389E7;
+  --ta-heading:#EFF1FF; --ta-body:rgba(240,246,252,.78);
+  --ta-muted:rgba(255,255,255,.5); --ta-dim:rgba(255,255,255,.35);
+  --ta-border:rgba(255,255,255,.08);
+  --ta-font-head:'Plus Jakarta Sans',-apple-system,'Segoe UI',sans-serif;
+  --ta-font-body:'DM Sans',-apple-system,'Segoe UI',sans-serif;
+  --ta-container:1280px; --ta-radius:12px;
+  --ta-cta-glow:0 0 24px rgba(0,161,211,.4), 0 0 60px rgba(0,161,211,.12);
+  --ta-em-glow:0 0 40px rgba(76,201,240,.25);
+  --ta-ease:cubic-bezier(.16,1,.3,1);
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--ta-bg); color: var(--ta-body);
+  font-family: var(--ta-font-body); line-height: 1.6; overflow-x: hidden;
+}
+h1,h2,h3 { font-family: var(--ta-font-head); color: var(--ta-heading);
+  font-weight: 800; line-height: 1.08; letter-spacing: -.028em; margin: 0; }
+h1 em, h2 em { font-style: italic; color: var(--ta-accent); text-shadow: var(--ta-em-glow); }
+a { color: var(--ta-accent); text-decoration: none; }
+canvas { display: block; }
+.wrap { width: min(100% - 40px, var(--ta-container)); margin-inline: auto; }
+
+/* ── the picker ───────────────────────────────────────────── */
+.picker {
+  position: sticky; top: 0; z-index: 90;
+  background: rgba(10,22,40,.94); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--ta-border);
+}
+.picker .in {
+  width: min(100% - 40px, var(--ta-container)); margin-inline: auto;
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 12px 0;
+}
+.picker .lede {
+  font-family: var(--ta-font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--ta-dim);
+  margin-right: 12px; white-space: nowrap;
+}
+.picker button {
+  all: unset; cursor: pointer; box-sizing: border-box;
+  display: inline-flex; align-items: baseline; gap: 9px;
+  font-family: var(--ta-font-head); font-size: 14px; font-weight: 600;
+  padding: 10px 18px; border-radius: 9px; color: var(--ta-muted);
+  border: 1px solid transparent; white-space: nowrap;
+  transition: color .2s var(--ta-ease), background .2s var(--ta-ease);
+}
+.picker button i { font-style: normal; font-size: 11px; letter-spacing: .1em;
+  text-transform: uppercase; opacity: .62; }
+.picker button:hover { color: var(--ta-heading); background: rgba(255,255,255,.05); }
+.picker button[aria-selected="true"] { color: var(--ta-bg-deep); background: var(--ta-accent); }
+.picker button[aria-selected="true"] i { opacity: .78; }
+.picker button:focus-visible { outline: 2px solid var(--ta-accent); outline-offset: 2px; }
+@media (max-width: 700px) {
+  .picker .lede { display: none; }
+  .picker button { padding: 9px 13px; font-size: 13px; }
+  .picker button i { display: none; }
+}
+
+/* ── shared hero furniture ────────────────────────────────── */
+.eyebrow { font-family: var(--ta-font-head); font-size: clamp(10px,1.1vw,12px);
+  font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--ta-accent); margin: 0 0 26px; }
+.lede-p { font-size: clamp(16px,1.35vw,19px); color: var(--ta-body);
+  max-width: 54ch; margin: 26px 0 0; }
+.ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 40px; }
+.btn { display: inline-flex; align-items: center; font-family: var(--ta-font-head);
+  font-size: 16px; font-weight: 700; padding: 17px 32px; border-radius: var(--ta-radius);
+  background: var(--ta-cta); color: #fff; border: 1px solid var(--ta-cta);
+  box-shadow: var(--ta-cta-glow); transition: background .2s var(--ta-ease), transform .2s var(--ta-ease); }
+.btn:hover { background: var(--ta-cta-hover); transform: translateY(-2px); }
+.btn2 { display: inline-flex; align-items: center; font-family: var(--ta-font-head);
+  font-size: 15px; font-weight: 600; padding: 16px 24px; border-radius: var(--ta-radius);
+  color: var(--ta-heading); border: 1px solid var(--ta-border);
+  transition: border-color .2s var(--ta-ease), background .2s var(--ta-ease); }
+.btn2:hover { border-color: var(--ta-accent); background: rgba(68,199,244,.06); }
+.btn:focus-visible, .btn2:focus-visible { outline: 2px solid var(--ta-accent); outline-offset: 3px; }
+
+/* ── A · Sequence Engine ──────────────────────────────────── */
+#pa .hero { position: relative; min-height: min(88vh,880px); display: flex;
+  align-items: center; padding: 96px 0 92px; isolation: isolate; }
+/* a canvas is a replaced element: inset:0 alone leaves it at its intrinsic
+   300x150 and lets the width attribute overflow the viewport */
+#pa .stage { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; }
+#pa .scrim { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    linear-gradient(100deg, var(--ta-bg) 0%, rgba(14,27,48,.92) 28%, rgba(14,27,48,.38) 48%, rgba(14,27,48,0) 64%),
+    linear-gradient(0deg, var(--ta-bg) 0%, rgba(14,27,48,0) 24%); }
+#pa .hero .wrap { position: relative; z-index: 2; }
+#pa h1 { font-size: clamp(42px,6.2vw,92px); max-width: 15ch; }
+#pa h1 em { display: block; }
+#pa .readout { margin-top: 44px; display: inline-flex; border: 1px solid var(--ta-border);
+  border-radius: 14px; background: rgba(10,22,40,.66); backdrop-filter: blur(8px); overflow: hidden; }
+#pa .readout div { padding: 15px 22px; border-right: 1px solid var(--ta-border); }
+#pa .readout div:last-child { border-right: 0; }
+#pa .readout span { display: block; font-family: var(--ta-font-head); }
+#pa .readout .k { font-size: 10px; font-weight: 700; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--ta-dim); margin-bottom: 5px; }
+#pa .readout .v { font-size: 17px; font-weight: 700; color: var(--ta-heading);
+  font-variant-numeric: tabular-nums; min-width: 6ch; }
+#pa .readout .v.on { color: var(--ta-accent); }
+#pa .after { padding: 0 0 120px; }
+#pa .after hr { border: 0; height: 1px; margin: 0 0 52px;
+  background: linear-gradient(90deg, rgba(68,199,244,.3), rgba(68,199,244,0)); }
+#pa .after h2 { font-size: clamp(26px,3vw,40px); max-width: 22ch; }
+#pa .after p { max-width: 60ch; margin: 20px 0 0; }
+@media (max-width: 900px) {
+  #pa .hero { min-height: auto; padding: 72px 0 90px; }
+  #pa .scrim { background: linear-gradient(180deg, rgba(14,27,48,.42), rgba(14,27,48,.76) 55%, var(--ta-bg)); }
+  #pa .readout { display: flex; width: 100%; }
+  #pa .readout div { flex: 1; padding: 13px 14px; }
+  #pa .readout .v { font-size: 15px; min-width: 0; }
+}
+
+/* ── B · Signal Desk ──────────────────────────────────────── */
+#pb { background: var(--ta-bg-deep); }
+#pb .hero { padding: 84px 0 0; }
+#pb .top { display: grid; grid-template-columns: minmax(0,1fr) 268px;
+  gap: clamp(28px,5vw,76px); align-items: end; }
+#pb h1 { font-size: clamp(44px,7.4vw,116px); letter-spacing: -.04em; max-width: 13ch; }
+#pb h1 em { display: block; }
+#pb .rail { border-left: 1px solid var(--ta-border); padding-left: 26px; }
+#pb .rail dl { margin: 0; display: grid; gap: 22px; }
+#pb .rail dt { font-family: var(--ta-font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--ta-dim); margin-bottom: 5px; }
+#pb .rail dd { margin: 0; font-family: var(--ta-font-head); font-size: 22px; font-weight: 800;
+  color: var(--ta-heading); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+#pb .rail dd b { color: var(--ta-accent); }
+#pb .trace { margin-top: clamp(38px,5vw,62px); }
+#pb .trace canvas { width: 100%; height: clamp(190px,24vw,320px); }
+#pb .labs { display: flex; justify-content: space-between;
+  border-top: 1px solid var(--ta-border); padding-top: 12px; }
+#pb .labs span { font-family: var(--ta-font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--ta-dim); }
+#pb .labs span:last-child { color: var(--ta-accent); }
+#pb .desk { padding: clamp(56px,7vw,96px) 0 130px; }
+#pb .desk h2 { font-size: clamp(24px,2.6vw,34px); margin-bottom: 8px; }
+#pb .desk .sub { color: var(--ta-muted); font-size: 15px; margin: 0 0 38px; }
+#pb .rows { border-top: 1px solid var(--ta-border); }
+#pb .row { border-bottom: 1px solid var(--ta-border); }
+#pb .row > button { all: unset; box-sizing: border-box; cursor: pointer; display: grid;
+  grid-template-columns: 62px minmax(0,1fr) auto 26px; align-items: center; gap: 18px;
+  width: 100%; padding: 22px 6px;
+  transition: background .18s var(--ta-ease), padding-left .18s var(--ta-ease); }
+#pb .row > button:hover { background: rgba(68,199,244,.045); padding-left: 14px; }
+#pb .row > button:focus-visible { outline: 2px solid var(--ta-accent); outline-offset: -2px; }
+#pb .num { font-family: var(--ta-font-head); font-size: 13px; font-weight: 700;
+  color: var(--ta-dim); font-variant-numeric: tabular-nums; letter-spacing: .06em; }
+#pb .ttl { font-family: var(--ta-font-head); font-size: clamp(17px,1.7vw,22px);
+  font-weight: 700; color: var(--ta-heading); letter-spacing: -.02em; }
+#pb .tag { font-family: var(--ta-font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--ta-accent);
+  border: 1px solid rgba(68,199,244,.3); border-radius: 100px; padding: 5px 12px; white-space: nowrap; }
+#pb .chev { width: 12px; height: 12px; border-right: 2px solid var(--ta-muted);
+  border-bottom: 2px solid var(--ta-muted); transform: rotate(45deg);
+  transition: transform .25s var(--ta-ease); justify-self: end; margin-bottom: 4px; }
+#pb .row[data-open="1"] .chev { transform: rotate(225deg); margin-bottom: -4px; }
+#pb .body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s var(--ta-ease); }
+#pb .row[data-open="1"] .body { grid-template-rows: 1fr; }
+#pb .body > div { overflow: hidden; }
+#pb .body p { margin: 0; padding: 0 6px 26px 80px; max-width: 68ch; }
+@media (max-width: 860px) {
+  #pb .top { grid-template-columns: 1fr; align-items: start; }
+  #pb .rail { border-left: 0; border-top: 1px solid var(--ta-border); padding: 26px 0 0; }
+  #pb .rail dl { grid-template-columns: repeat(3,1fr); gap: 16px; }
+  #pb .row > button { grid-template-columns: 40px minmax(0,1fr) 20px; gap: 12px; row-gap: 10px; }
+  #pb .tag { grid-column: 2/3; justify-self: start; }
+  #pb .body p { padding-left: 52px; }
+}
+
+/* ── C · Blueprint ────────────────────────────────────────── */
+#pc .sheet { position: relative; padding: 80px 0 0;
+  background-image:
+    linear-gradient(rgba(68,199,244,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(68,199,244,.035) 1px, transparent 1px);
+  background-size: 46px 46px; background-position: center top; }
+#pc .sheet::after { content:''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(120% 78% at 50% 34%, transparent 42%, var(--ta-bg) 88%); }
+#pc .sheet .wrap { position: relative; z-index: 2; }
+#pc .head { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 40px; align-items: end; }
+#pc h1 { font-size: clamp(40px,5.2vw,78px); max-width: 16ch; }
+#pc h1 em { display: block; }
+#pc .stamp { border: 1px solid rgba(68,199,244,.35); border-radius: 6px;
+  padding: 14px 18px; text-align: right; }
+#pc .stamp span { display: block; font-family: var(--ta-font-head); }
+#pc .stamp .k { font-size: 9px; font-weight: 700; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--ta-dim); }
+#pc .stamp .v { font-size: 15px; font-weight: 700; color: var(--ta-accent);
+  letter-spacing: .04em; margin-top: 4px; }
+#pc .plan { margin: clamp(20px,2.6vw,34px) 0 0; }
+#pc .plan svg { width: 100%; height: auto; display: block; overflow: visible; }
+#pc .draw { stroke-dasharray: var(--len); stroke-dashoffset: var(--len);
+  animation: plot 1.1s var(--ta-ease) forwards; animation-delay: var(--d,0s); }
+@keyframes plot { to { stroke-dashoffset: 0; } }
+#pc .fade { opacity: 0; animation: appear .5s var(--ta-ease) forwards; animation-delay: var(--d,0s); }
+@keyframes appear { to { opacity: 1; } }
+#pc .stage { cursor: pointer; }
+#pc .stage .hit { fill: transparent; }
+#pc .stage .box { fill: #121F36; stroke: rgba(255,255,255,.14);
+  transition: stroke .2s var(--ta-ease), fill .2s var(--ta-ease); }
+#pc .stage .lbl { fill: #EFF1FF; font-family: var(--ta-font-head); font-weight: 700; font-size: 15px; }
+#pc .stage .idx { fill: rgba(255,255,255,.35); font-family: var(--ta-font-head);
+  font-weight: 700; font-size: 10.5px; letter-spacing: .16em; }
+#pc .stage .cnt { fill: #44C7F4; font-family: var(--ta-font-head); font-weight: 700;
+  font-size: 11px; letter-spacing: .1em; }
+#pc .stage:hover .box, #pc .stage:focus-visible .box { stroke: #44C7F4; fill: #16263F; }
+#pc .stage:focus-visible { outline: none; }
+#pc .spine { stroke: rgba(68,199,244,.42); stroke-width: 1.4; fill: none; }
+#pc .drop { stroke: rgba(255,255,255,.16); stroke-width: 1; fill: none; }
+#pc .dim { stroke: rgba(68,199,244,.4); stroke-width: 1; fill: none; }
+#pc .dimtxt { fill: #44C7F4; font-family: var(--ta-font-head); font-weight: 700;
+  font-size: 10px; letter-spacing: .16em; }
+#pc .note { fill: rgba(255,255,255,.4); font-family: var(--ta-font-body); font-size: 11.5px; }
+#pc .runner { fill: #EFF1FF; }
+#pc .detail { margin-top: 30px; border-top: 1px solid var(--ta-border); padding-top: 24px;
+  display: grid; grid-template-columns: 150px minmax(0,1fr); gap: 26px;
+  align-items: start; min-height: 88px; }
+#pc .detail .who { font-family: var(--ta-font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--ta-accent); }
+#pc .detail p { margin: 0; max-width: 64ch; }
+#pc .close { padding: clamp(60px,7vw,96px) 0 130px; }
+#pc .close h2 { font-size: clamp(26px,3vw,42px); max-width: 20ch; }
+@media (max-width: 860px) {
+  #pc .head { grid-template-columns: 1fr; align-items: start; }
+  #pc .stamp { text-align: left; justify-self: start; }
+  #pc .detail { grid-template-columns: 1fr; gap: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  #pc .draw { stroke-dashoffset: 0; animation: none; }
+  #pc .fade { opacity: 1; animation: none; }
+}
+</style>
+
+<nav class="picker" role="tablist" aria-label="Concept directions">
+  <div class="in">
+    <span class="lede">Pick A Direction</span>
+    <button role="tab" id="tA" aria-controls="pa" aria-selected="true">A <i>Sequence Engine</i></button>
+    <button role="tab" id="tB" aria-controls="pb" aria-selected="false">B <i>Signal Desk</i></button>
+    <button role="tab" id="tC" aria-controls="pc" aria-selected="false">C <i>Blueprint</i></button>
+  </div>
+</nav>
+
+<!-- ══ A · Sequence Engine ══ -->
+<main id="pa" role="tabpanel" aria-labelledby="tA">
+  <section class="hero">
+    <canvas class="stage" aria-hidden="true"></canvas>
+    <div class="scrim"></div>
+    <div class="wrap">
+      <p class="eyebrow">LinkedIn Marketing For Financial Advisors</p>
+      <h1>Stop Collecting LinkedIn Advice.<em>Start Running The Sequence.</em></h1>
+      <p class="lede-p">Eleven playbooks we run for advisors ourselves, arranged in the one order that makes them work. Profile, content, engagement, prospecting, offers, objections, proof.</p>
+      <div class="ctas">
+        <a class="btn" href="#a-inside">Get The Library — $27</a>
+        <a class="btn2" href="#a-inside">See What Is Inside</a>
+      </div>
+      <div class="readout">
+        <div><span class="k">Stage</span><span class="v" id="rStage">01 / 07</span></div>
+        <div><span class="k">Running</span><span class="v on" id="rName">Profile</span></div>
+        <div><span class="k">Guides</span><span class="v" id="rCount">2</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="after" id="a-inside">
+    <div class="wrap">
+      <hr>
+      <h2>The Order Is The Product.</h2>
+      <p>Eleven separate downloads give an advisor eleven starting points, which is the same as none. The Library is the same eleven documents with the argument put back in: what to fix first, what only works after that, and what to stop doing until the step before it is done.</p>
+    </div>
+  </section>
+</main>
+
+<!-- ══ B · Signal Desk ══ -->
+<main id="pb" role="tabpanel" aria-labelledby="tB" hidden>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">LinkedIn Marketing For Financial Advisors</p>
+      <div class="top">
+        <h1>Stop Collecting LinkedIn Advice.<em>Start Running The Sequence.</em></h1>
+        <div class="rail"><dl>
+          <div><dt>Guides</dt><dd>11</dd></div>
+          <div><dt>Stages, In Order</dt><dd>7</dd></div>
+          <div><dt>One Price</dt><dd><b>$27</b></dd></div>
+        </dl></div>
+      </div>
+      <p class="lede-p">Eleven playbooks we run for advisors ourselves, arranged in the one order that makes them work.</p>
+      <div class="ctas">
+        <a class="btn" href="#b-desk">Get The Library — $27</a>
+        <a class="btn2" href="#b-desk">See What Is Inside</a>
+      </div>
+      <div class="trace">
+        <canvas id="wave" aria-hidden="true"></canvas>
+        <div class="labs"><span>Eleven Downloads</span><span>One Sequence</span></div>
+      </div>
+    </div>
+  </section>
+  <section class="desk" id="b-desk">
+    <div class="wrap">
+      <h2>Seven Stages, In Order.</h2>
+      <p class="sub">Open any one to see what it fixes and why it sits where it sits.</p>
+      <div class="rows" id="bRows"></div>
+    </div>
+  </section>
+</main>
+
+<!-- ══ C · Blueprint ══ -->
+<main id="pc" role="tabpanel" aria-labelledby="tC" hidden>
+  <section class="sheet">
+    <div class="wrap">
+      <p class="eyebrow">LinkedIn Marketing For Financial Advisors</p>
+      <div class="head">
+        <h1>Stop Collecting LinkedIn Advice.<em>Start Running The Sequence.</em></h1>
+        <div class="stamp">
+          <span class="k">Assembly</span><span class="v">TA-LIB / 11 PARTS</span>
+          <span class="k" style="margin-top:12px">Revision</span><span class="v">$27</span>
+        </div>
+      </div>
+      <div class="plan"><svg id="plan" viewBox="0 0 1280 500" role="img"
+        aria-label="Schematic of the seven-stage sequence: Profile, Content, Engagement, Prospecting, Offers, Objections and Proof, carrying eleven guides in order."></svg></div>
+      <div class="detail">
+        <div class="who" id="dWho">Stage 01 — Profile</div>
+        <p id="dTxt">Everything downstream lands here. Traffic sent to a profile that reads like a resume converts at whatever that profile deserves, so this stage runs before any of the six that follow.</p>
+      </div>
+      <div class="ctas">
+        <a class="btn" href="#c-close">Get The Library — $27</a>
+        <a class="btn2" href="#c-close">See What Is Inside</a>
+      </div>
+    </div>
+  </section>
+  <section class="close" id="c-close">
+    <div class="wrap">
+      <h2>Eleven Parts. One Assembly.</h2>
+      <p class="lede-p">Sold separately, the eleven guides give an advisor eleven starting points, which is the same as none. Drawn in order, they are one system with a first step.</p>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
+        integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+(function () {
+  'use strict';
+  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var STAGES = [
+    { n:'Profile',     g:2, t:'Everything downstream lands here. Traffic sent to a profile that reads like a resume converts at whatever that profile deserves, so this stage runs before any of the six that follow.' },
+    { n:'Content',     g:3, t:'What to write once the profile can hold the attention it earns. Three guides, because this is where most advisors stall and quit.' },
+    { n:'Engagement',  g:1, t:'Posting is half of it. This is the half that puts a name in front of the same people repeatedly without asking them for anything yet.' },
+    { n:'Prospecting', g:1, t:'Only now does reaching out cost nothing to send. The profile holds, the content proves, so the message lands on a warm reader.' },
+    { n:'Offers',      g:2, t:'What you actually say when someone replies. Two guides: how to shape the offer, and how to score the one you have.' },
+    { n:'Objections',  g:1, t:'The four answers that come back most, and the language that keeps a conversation alive past them.' },
+    { n:'Proof',       g:1, t:'The questions that turn a happy client into the asset that shortens every conversation after it.' }
+  ];
+
+  var GUIDES = [
+    ['The LinkedIn Profile Update Guide','Profile','Everything downstream lands on a profile. Traffic sent to a page that reads like a resume converts at whatever that page deserves, which is why this is first and why nothing else is worth doing until it is done.'],
+    ['The Polished LinkedIn Growth Playbook','Profile','The settings, the header, the featured section and the proof placement that make a stranger stay past four seconds.'],
+    ['The Content Creation Playbook','Content','What to write once the profile can hold the attention it earns. Formats, angles and the hook work that decides whether anyone reads the second line.'],
+    ['The 30-Day LinkedIn Content Plan','Content','Thirty days already decided, so the daily question stops being what to post.'],
+    ['The AI Prompt Guide','Content','The prompts that turn one idea into a week of posts without flattening the voice into something a reader can smell.'],
+    ['The LinkedIn Engagement Flywheel','Engagement','Where to spend the twenty minutes that decide whether the next post reaches anyone.'],
+    ['The Modern Prospecting Playbook','Prospecting','Who to reach, in what order, and what the first message says now that the profile and the content are doing their share.'],
+    ['Making Offers On LinkedIn','Offers','The move from conversation to offer, without the pivot everyone can see coming.'],
+    ['The LinkedIn Offer Scorecard','Offers','Score the offer you already have before you write another word of copy for it.'],
+    ['The Objection Handling Guide','Objections','The four answers that come back most, and the language that keeps the conversation alive past them.'],
+    ['5 Questions To Ask Your Happy Clients','Proof','The questions that turn a satisfied client into the asset that shortens every conversation after it.']
+  ];
+
+  /* ══ A · the sequence engine ═════════════════════════════ */
+  function initA() {
+    var cv = document.querySelector('#pa .stage');
+    var NODES = []; STAGES.forEach(function (s, si) { for (var i = 0; i < s.g; i++) NODES.push(si); });
+    var N = NODES.length;
+    var elStage = document.getElementById('rStage'),
+        elName  = document.getElementById('rName'),
+        elCount = document.getElementById('rCount');
+    if (!window.THREE) { cv.style.display = 'none'; return; }
+
+    var renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(46, 1, 0.1, 100);
+    camera.position.set(0, 4.2, 12.0); camera.lookAt(0, 0, 0);
+
+    var group = new THREE.Group(); group.rotation.x = 0.26; scene.add(group);
+    var R = 3.95, TILT = 0.30;
+    function pos(t) { var a = t * Math.PI * 2;
+      return new THREE.Vector3(Math.cos(a) * R, Math.sin(a * 2) * TILT, Math.sin(a) * R); }
+
+    var tp = []; for (var i = 0; i <= 360; i++) tp.push(pos(i / 360));
+    group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(tp),
+      new THREE.LineBasicMaterial({ color: 0x44C7F4, transparent: true, opacity: 0.46 })));
+
+    var nodeGeo = new THREE.BufferGeometry();
+    var np = new Float32Array(N * 3), nlit = new Float32Array(N), nodeT = [];
+    for (var i = 0; i < N; i++) {
+      var t = i / N; nodeT.push(t); var p = pos(t);
+      np[i*3] = p.x; np[i*3+1] = p.y; np[i*3+2] = p.z; nlit[i] = 0;
+    }
+    nodeGeo.setAttribute('position', new THREE.BufferAttribute(np, 3));
+    nodeGeo.setAttribute('aLit', new THREE.BufferAttribute(nlit, 1));
+
+    // crisp core plus a thin ring — never a soft additive blob
+    var mat = new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      uniforms: { uPR: { value: Math.min(window.devicePixelRatio || 1, 2) } },
+      vertexShader:
+        'attribute float aLit; varying float vLit; uniform float uPR;' +
+        'void main(){ vLit=aLit; vec4 mv=modelViewMatrix*vec4(position,1.0);' +
+        'gl_PointSize=(15.0+aLit*22.0)*uPR*(12.0/-mv.z); gl_Position=projectionMatrix*mv; }',
+      fragmentShader:
+        'varying float vLit;' +
+        'void main(){ vec2 c=gl_PointCoord-0.5; float d=length(c);' +
+        'float core=smoothstep(0.30,0.16,d);' +
+        'float ring=smoothstep(0.50,0.42,d)-smoothstep(0.42,0.34,d);' +
+        'float a=core*(0.55+vLit*0.45)+ring*(0.45+vLit*0.55);' +
+        'if(a<0.01) discard;' +
+        'vec3 col=mix(vec3(0.34,0.68,0.86), vec3(0.60,0.92,1.0), vLit);' +
+        'gl_FragColor=vec4(col,a); }'
+    });
+    group.add(new THREE.Points(nodeGeo, mat));
+
+    var PULSE = 40, pulseGeo = new THREE.BufferGeometry();
+    var pp = new Float32Array(PULSE * 3), pl = new Float32Array(PULSE);
+    for (var i = 0; i < PULSE; i++) pl[i] = 1 - i / PULSE;
+    pulseGeo.setAttribute('position', new THREE.BufferAttribute(pp, 3));
+    pulseGeo.setAttribute('aLit', new THREE.BufferAttribute(pl, 1));
+    group.add(new THREE.Points(pulseGeo, mat.clone()));
+
+    var F = 260, fg = new THREE.BufferGeometry();
+    var fp = new Float32Array(F * 3), fl = new Float32Array(F);
+    for (var i = 0; i < F; i++) {
+      var r = 6 + Math.random() * 12, a = Math.random() * Math.PI * 2;
+      fp[i*3] = Math.cos(a) * r; fp[i*3+1] = (Math.random() - .5) * 9;
+      fp[i*3+2] = Math.sin(a) * r; fl[i] = 0;
+    }
+    fg.setAttribute('position', new THREE.BufferAttribute(fp, 3));
+    fg.setAttribute('aLit', new THREE.BufferAttribute(fl, 1));
+    var field = new THREE.Points(fg, mat.clone());
+    field.material.uniforms.uPR.value = Math.min(window.devicePixelRatio || 1, 2) * 0.4;
+    group.add(field);
+
+    function size() {
+      var w = cv.clientWidth, h = cv.clientHeight;
+      if (!w || !h) return;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h; camera.fov = w > 900 ? 46 : 60;
+      var halfH = 12.0 * Math.tan(camera.fov * Math.PI / 360), halfW = halfH * (w / h);
+      group.position.x = w > 900 ? Math.min(2.4, Math.max(0, halfW - R * 0.92)) : 0;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener('resize', size); size();
+
+    var mx = 0, my = 0;
+    window.addEventListener('pointermove', function (e) {
+      mx = e.clientX / window.innerWidth - .5; my = e.clientY / window.innerHeight - .5;
+    }, { passive: true });
+
+    var head = 0, last = -1, t0 = performance.now();
+    (function frame(now) {
+      var dt = Math.min((now - t0) / 1000, .05); t0 = now;
+      if (!REDUCED) head = (head + dt * .072) % 1;
+      group.rotation.y += dt * .09;
+      group.rotation.x += ((0.26 + my * .12) - group.rotation.x) * .045;
+      group.position.z = mx * .7;
+
+      var lit = nodeGeo.attributes.aLit;
+      for (var i = 0; i < N; i++) {
+        var d = ((head - nodeT[i]) % 1 + 1) % 1;
+        var near = d < .035 ? 1 : Math.max(0, 1 - (d - .035) * 4.5);
+        lit.array[i] += (near - lit.array[i]) * (near > lit.array[i] ? .35 : .035);
+      }
+      lit.needsUpdate = true;
+
+      var parr = pulseGeo.attributes.position.array;
+      for (var i = 0; i < PULSE; i++) {
+        var p = pos(((head - i * .0016) % 1 + 1) % 1);
+        parr[i*3] = p.x; parr[i*3+1] = p.y; parr[i*3+2] = p.z;
+      }
+      pulseGeo.attributes.position.needsUpdate = true;
+
+      var si = NODES[Math.floor(head * N) % N];
+      if (si !== last) {
+        last = si;
+        elStage.textContent = String(si + 1).padStart(2, '0') + ' / 07';
+        elName.textContent = STAGES[si].n;
+        elCount.textContent = String(STAGES[si].g);
+      }
+      renderer.render(scene, camera);
+      requestAnimationFrame(frame);
+    })(performance.now());
+  }
+
+  /* ══ B · the signal desk ═════════════════════════════════ */
+  function initB() {
+    var rows = document.getElementById('bRows');
+    GUIDES.forEach(function (g, i) {
+      var d = document.createElement('div');
+      d.className = 'row'; if (i === 0) d.dataset.open = '1';
+      d.innerHTML =
+        '<button type="button" aria-expanded="' + (i === 0) + '">' +
+          '<span class="num">' + String(i + 1).padStart(2, '0') + '</span>' +
+          '<span class="ttl"></span>' +
+          '<span class="tag"></span>' +
+          '<span class="chev" aria-hidden="true"></span>' +
+        '</button><div class="body"><div><p></p></div></div>';
+      d.querySelector('.ttl').textContent = g[0];
+      d.querySelector('.tag').textContent = g[1];
+      d.querySelector('.body p').textContent = g[2];
+      d.querySelector('button').addEventListener('click', function () {
+        var open = d.dataset.open === '1';
+        d.dataset.open = open ? '0' : '1';
+        this.setAttribute('aria-expanded', open ? 'false' : 'true');
+      });
+      rows.appendChild(d);
+    });
+
+    var cv = document.getElementById('wave'), ctx = cv.getContext('2d');
+    var W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2);
+    function size() {
+      W = cv.clientWidth; H = cv.clientHeight;
+      cv.width = W * DPR; cv.height = H * DPR;
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+    window.addEventListener('resize', size); size();
+
+    // deterministic value noise, so the left half is messy but never flickers
+    function vn(x, seed) {
+      var i = Math.floor(x), f = x - i;
+      function h(n) { n = (n << 13) ^ n;
+        return 1 - ((n * (n * n * 15731 + 789221) + 1376312589 & 0x7fffffff) / 1073741824); }
+      var a = h(i + seed * 977), b = h(i + 1 + seed * 977), u = f * f * (3 - 2 * f);
+      return a * (1 - u) + b * u;
+    }
+
+    var STEPS = 7, t = 0;
+    (function frame() {
+      if (!REDUCED) t += .0055;
+      if (!W) size();
+      ctx.clearRect(0, 0, W, H);
+      var base = H * .80, top = H * .16;
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.055)'; ctx.lineWidth = 1;
+      for (var s = 1; s <= STEPS; s++) {
+        var gx = W * .42 + (W * .58) * (s / STEPS);
+        ctx.beginPath(); ctx.moveTo(gx, top); ctx.lineTo(gx, base); ctx.stroke();
+      }
+      for (var pass = 0; pass < 2; pass++) {
+        ctx.beginPath();
+        for (var px = 0; px <= W; px += 2) {
+          var u = px / W;
+          var order = Math.max(0, Math.min(1, (u - .26) / .46));
+          var noise = vn(px * .055, 1) * .62 + vn(px * .17, 2) * .38;
+          var drift = Math.sin(px * .012 + t * 2) * .35;
+          var chaos = (noise + drift) * (1 - order);
+          var stair = Math.floor(Math.max(0, u - .42) / .58 * STEPS) / STEPS;
+          var breathe = Math.sin(t * 1.4 + stair * 5) * .012 * order;
+          var y = base + (chaos * .30 - stair * order + breathe) * (base - top);
+          px === 0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y);
+        }
+        ctx.strokeStyle = pass === 0 ? 'rgba(68,199,244,0.16)' : '#44C7F4';
+        ctx.lineWidth = pass === 0 ? 7 : 1.6;
+        ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.stroke();
+      }
+      for (var s = 1; s <= STEPS; s++) {
+        var gx = W * .42 + (W * .58) * (s / STEPS);
+        ctx.beginPath(); ctx.arc(gx, base - (s / STEPS) * (base - top), 2.6, 0, 6.284);
+        ctx.fillStyle = '#EFF1FF'; ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    })();
+  }
+
+  /* ══ C · the blueprint ═══════════════════════════════════ */
+  function initC() {
+    var NS = 'http://www.w3.org/2000/svg', svg = document.getElementById('plan');
+    function el(t, a) { var e = document.createElementNS(NS, t); for (var k in a) e.setAttribute(k, a[k]); return e; }
+    function len(p) { try { return p.getTotalLength(); } catch (e) { return 900; } }
+
+    var W = 1280, L = 92, Rr = 1188, Y = 250, GAP = (Rr - L) / (STAGES.length - 1);
+    var BW = 132, BH = 62, dimY = 108;
+
+    var dim = el('path', { class: 'dim draw', d: 'M' + L + ' ' + (dimY + 6) + ' V' + dimY + ' H' + Rr + ' V' + (dimY + 6) });
+    svg.appendChild(dim); dim.style.setProperty('--len', len(dim)); dim.style.setProperty('--d', '.15s');
+    var dt = el('text', { class: 'dimtxt fade', x: W / 2, y: dimY - 10, 'text-anchor': 'middle' });
+    dt.textContent = 'SEVEN STAGES — RUN IN ORDER'; svg.appendChild(dt); dt.style.setProperty('--d', '.9s');
+
+    var spine = el('path', { class: 'spine draw', d: 'M' + L + ' ' + Y + ' H' + Rr });
+    svg.appendChild(spine); spine.style.setProperty('--len', len(spine)); spine.style.setProperty('--d', '.3s');
+
+    var dWho = document.getElementById('dWho'), dTxt = document.getElementById('dTxt');
+    function show(s, i) {
+      dWho.textContent = 'Stage ' + String(i + 1).padStart(2, '0') + ' — ' + s.n;
+      dTxt.textContent = s.t;
+    }
+
+    STAGES.forEach(function (s, i) {
+      var x = L + GAP * i, up = i % 2 === 0, by = up ? Y - 46 - BH : Y + 46, d = .55 + i * .11;
+      var drop = el('path', { class: 'drop draw', d: 'M' + x + ' ' + Y + ' V' + (up ? by + BH : by) });
+      svg.appendChild(drop); drop.style.setProperty('--len', len(drop)); drop.style.setProperty('--d', d + 's');
+
+      var g = el('g', { class: 'stage fade', tabindex: '0', role: 'button',
+        'aria-label': 'Stage ' + (i + 1) + ', ' + s.n });
+      g.style.setProperty('--d', (d + .12) + 's');
+      g.appendChild(el('rect', { class: 'box', x: x - BW / 2, y: by, width: BW, height: BH, rx: 5 }));
+      var idx = el('text', { class: 'idx', x: x - BW / 2 + 13, y: by + 21 });
+      idx.textContent = 'STAGE ' + String(i + 1).padStart(2, '0'); g.appendChild(idx);
+      var lbl = el('text', { class: 'lbl', x: x - BW / 2 + 13, y: by + 42 });
+      lbl.textContent = s.n; g.appendChild(lbl);
+      var cnt = el('text', { class: 'cnt', x: x + BW / 2 - 13, y: by + 21, 'text-anchor': 'end' });
+      cnt.textContent = '×' + s.g; g.appendChild(cnt);
+      g.appendChild(el('rect', { class: 'hit', x: x - BW / 2, y: by, width: BW, height: BH }));
+
+      for (var k = 0; k < s.g; k++) {
+        var tx = x - (s.g - 1) * 7 + k * 14, ty = up ? by - 12 : by + BH + 12;
+        var tick = el('path', { class: 'drop draw', d: 'M' + tx + ' ' + ty + ' v' + (up ? -9 : 9) });
+        svg.appendChild(tick); tick.style.setProperty('--len', 9); tick.style.setProperty('--d', (d + .3) + 's');
+      }
+      svg.appendChild(g);
+      ['mouseenter', 'focus', 'click'].forEach(function (ev) {
+        g.addEventListener(ev, function () { show(s, i); });
+      });
+      g.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(s, i); }
+      });
+    });
+
+    STAGES.forEach(function (s, i) {
+      var c = el('circle', { class: 'runner fade', cx: L + GAP * i, cy: Y, r: 3.2 });
+      svg.appendChild(c); c.style.setProperty('--d', (.6 + i * .11) + 's');
+    });
+
+    var lead = el('path', { class: 'dim draw', d: 'M' + L + ' ' + (Y + 222) + ' H' + (L + 250) });
+    svg.appendChild(lead); lead.style.setProperty('--len', len(lead)); lead.style.setProperty('--d', '1.5s');
+    var note = el('text', { class: 'note fade', x: L, y: Y + 214 });
+    note.textContent = 'Eleven guides — each one sits after the thing it depends on.';
+    svg.appendChild(note); note.style.setProperty('--d', '1.7s');
+  }
+
+  /* ══ the picker ══════════════════════════════════════════ */
+  var INIT = { pa: initA, pb: initB, pc: initC }, DONE = {};
+  function open(id) {
+    ['pa', 'pb', 'pc'].forEach(function (p) {
+      var panel = document.getElementById(p);
+      var tab = document.querySelector('[aria-controls="' + p + '"]');
+      var on = p === id;
+      panel.hidden = !on;
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    if (!DONE[id]) { DONE[id] = 1; INIT[id](); }   // canvases size to zero while hidden
+    else window.dispatchEvent(new Event('resize'));
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+  document.querySelectorAll('.picker button').forEach(function (b) {
+    b.addEventListener('click', function () { open(b.getAttribute('aria-controls')); });
+  });
+  initA();  DONE.pa = 1;
+})();
+</script>
