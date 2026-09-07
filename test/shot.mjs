@@ -33,6 +33,9 @@ for (const p of pages) {
   for (const v of VIEWS) {
     const page = await browser.newPage();
     await page.setViewport({ width: v.width, height: v.height, isMobile: v.isMobile, deviceScaleFactor: v.isMobile ? 2 : 1 });
+    // headless Chrome reports prefers-reduced-motion: reduce by default, which
+    // silently freezes any motion gated on it. Force the real-user value.
+    await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
     const errs = [];
     page.on('pageerror', e => errs.push(String(e).slice(0, 160)));
     page.on('requestfailed', r => errs.push('REQFAIL ' + r.url().slice(0, 90)));
