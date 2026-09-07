@@ -90,33 +90,39 @@
 .ta-lib .trust span::before { content:''; width: 6px; height: 6px; border-radius: 50%;
   background: var(--cta); flex: none; }
 
-/* the flight path */
+/* the comet viewport — a dark window inside the light page, because an
+   additive coma and tail only exist against darkness */
 .ta-lib .orbit { position: relative; width: 100%; aspect-ratio: 1;
-  max-width: clamp(430px,52vw,780px); margin-inline: auto; }
+  max-width: clamp(430px,52vw,780px); margin-inline: auto;
+  border-radius: 26px; overflow: hidden; background: #06101F;
+  box-shadow: 0 30px 70px rgba(10,22,40,.28), 0 0 0 1px rgba(14,27,48,.10); }
+.ta-lib .orbit::after { content:''; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(86% 78% at 50% 46%, rgba(6,16,31,0) 58%, rgba(6,16,31,.55) 100%); }
 .ta-lib .orbit canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.ta-lib .orbit .chip { position: absolute; transform: translate(-50%,-50%);
+.ta-lib .orbit .chip { position: absolute; z-index: 3; transform: translate(-50%,-50%);
   font-family: var(--head); font-size: 10.5px; font-weight: 700; letter-spacing: .06em;
-  white-space: nowrap; padding: 5px 9px; border-radius: 100px; background: #fff;
-  color: var(--ink); border: 1px solid var(--hair); pointer-events: none;
-  box-shadow: 0 2px 8px rgba(14,27,48,.05);
-  transition: background .3s var(--ease), border-color .3s var(--ease), box-shadow .3s var(--ease); }
-.ta-lib .orbit .chip[data-on="1"] { background: var(--cta); border-color: var(--cta);
-  box-shadow: 0 4px 14px rgba(0,161,211,.34); }   /* electric fill takes NAVY text: 6.02:1 */
-.ta-lib .orbit .chip[data-done="1"] { border-color: rgba(0,161,211,.5); }
-.ta-lib .orbit .hub { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
-  text-align: center; pointer-events: none; width: 56%; }
+  white-space: nowrap; padding: 5px 10px; border-radius: 100px;
+  background: rgba(10,22,40,.72); color: rgba(240,246,252,.74);
+  border: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(6px); pointer-events: none;
+  transition: background .3s var(--ease), color .3s var(--ease),
+              border-color .3s var(--ease), box-shadow .3s var(--ease); }
+.ta-lib .orbit .chip[data-done="1"] { color: #EFF1FF; border-color: rgba(68,199,244,.45); }
+.ta-lib .orbit .chip[data-on="1"] { background: var(--accent); color: var(--bg-deep);
+  border-color: var(--accent); box-shadow: 0 0 22px rgba(68,199,244,.5); }
+.ta-lib .orbit .hub { position: absolute; z-index: 3; left: 50%; top: 50%;
+  transform: translate(-50%,-50%); text-align: center; pointer-events: none; width: 58%; }
 .ta-lib .hub .k { font-family: var(--head); font-size: 10px; font-weight: 700;
-  letter-spacing: .2em; text-transform: uppercase; color: var(--ink-muted); }
+  letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.55); }
 .ta-lib .hub .n { font-family: var(--head); font-size: clamp(44px,5vw,74px); font-weight: 800;
-  color: var(--ink); letter-spacing: -.05em; line-height: 1; margin-top: 6px;
-  font-variant-numeric: tabular-nums; }
-.ta-lib .hub .n span { color: var(--ink-muted); font-size: .40em; letter-spacing: -.02em; }
+  color: #EFF1FF; letter-spacing: -.05em; line-height: 1; margin-top: 6px;
+  font-variant-numeric: tabular-nums; text-shadow: 0 0 34px rgba(68,199,244,.35); }
+.ta-lib .hub .n span { color: rgba(255,255,255,.34); font-size: .40em; letter-spacing: -.02em; }
 .ta-lib .hub .s { font-family: var(--head); font-size: clamp(13px,1.1vw,16px); font-weight: 700;
-  color: var(--ink); margin-top: 8px; }
+  color: var(--accent); margin-top: 8px; }
 .ta-lib .hub .bar { display: flex; gap: 3px; justify-content: center; margin-top: 12px; }
 .ta-lib .hub .bar i { display: block; width: 13px; height: 3px; border-radius: 2px;
-  background: var(--hair); transition: background .3s var(--ease); }
-.ta-lib .hub .bar i[data-on="1"] { background: var(--cta); }
+  background: rgba(255,255,255,.14); transition: background .3s var(--ease); }
+.ta-lib .hub .bar i[data-on="1"] { background: var(--accent); box-shadow: 0 0 10px rgba(68,199,244,.6); }
 
 /* ══ the enemy ═════════════════════════════════════════ */
 .ta-lib .enemy h2 { font-size: clamp(28px,3.5vw,52px); max-width: 18ch; }
@@ -621,10 +627,14 @@
     });
   });
 
-  /* ── the flight path ─────────────────────────────────── */
-  // The flight IS the content of this graphic, so it runs on every machine.
-  // Windows "Animation effects: off" reports prefers-reduced-motion, which
-  // silently froze an earlier build of this same page.
+  /* ── the comet run ───────────────────────────────────── */
+  // A real comet: an irregular nucleus, a coma built from particles rather than a
+  // soft blob, and TWO tails — a broad curved dust tail and a narrow ion tail that
+  // points away from the hub, which is how a comet actually behaves. It lives in a
+  // dark viewport because an additive coma and tail only exist against darkness.
+  //
+  // The flight IS the content here, so the loop runs on every machine. Windows
+  // "Animation effects: off" reports prefers-reduced-motion and froze an earlier build.
   var STAGES = [
     { n:'Profile', g:2 }, { n:'Content', g:3 }, { n:'Engagement', g:1 },
     { n:'Prospecting', g:1 }, { n:'Offers', g:2 }, { n:'Objections', g:1 }, { n:'Proof', g:1 }
@@ -645,21 +655,20 @@
   });
   if (!window.THREE) { cv.style.display = 'none'; return; }
 
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
   var renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.setClearAlpha(0);
+  renderer.setPixelRatio(DPR); renderer.setClearAlpha(0);
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(34, 1, 0.1, 100);
-  var TILT = 0.74, CAM_D = 20.6;
+  var camera = new THREE.PerspectiveCamera(34, 1, 0.1, 120);
+  var TILT = 0.72, CAM_D = 18.3;
   camera.position.set(0, Math.sin(TILT) * CAM_D, Math.cos(TILT) * CAM_D);
   camera.lookAt(0, 0, 0);
 
-  var R = 4.0, A0 = -Math.PI / 2;      // stop 01 sits at 12 o'clock, running clockwise
-  var INK = 0x0F1724, CYAN = 0x00A1D3;
+  var R = 4.0, A0 = -Math.PI / 2;        // stop 01 sits at 12 o'clock, running clockwise
+  var CYAN = 0x44C7F4;
   function ang(t) { return A0 + t * Math.PI * 2; }
-  function pt(t) { var a = ang(t); return new THREE.Vector3(Math.cos(a) * R, 0, Math.sin(a) * R); }
 
-  function band(rad, halfW, seg) {     // real ribbon geometry: gl.LINES is 1px and aliased
+  function band(rad, halfW, seg) {      // real ribbon geometry: gl.LINES is 1px and aliased
     var g = new THREE.BufferGeometry(), pos = [], tt = [], idx = [];
     for (var i = 0; i <= seg; i++) {
       var f = i / seg, a = ang(f), c = Math.cos(a), s = Math.sin(a);
@@ -674,80 +683,138 @@
 
   var laneMat = new THREE.ShaderMaterial({
     transparent: true, depthWrite: false, side: THREE.DoubleSide,
-    uniforms: { uHead:{value:0}, uInk:{value:new THREE.Color(INK)}, uCyan:{value:new THREE.Color(CYAN)} },
+    uniforms: { uHead: { value: 0 }, uCol: { value: new THREE.Color(CYAN) } },
     vertexShader: 'attribute float aT; varying float vT;' +
       'void main(){ vT=aT; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
-    fragmentShader: 'varying float vT; uniform float uHead; uniform vec3 uInk; uniform vec3 uCyan;' +
+    fragmentShader: 'varying float vT; uniform float uHead; uniform vec3 uCol;' +
       'void main(){ float done = 1.0 - smoothstep(uHead-0.004, uHead+0.0015, vT);' +
-      ' gl_FragColor = vec4(mix(uInk,uCyan,done), mix(0.10,1.0,done)); }'
+      ' gl_FragColor = vec4(uCol, mix(0.20,0.95,done)); }'
   });
-  scene.add(new THREE.Mesh(band(R, 0.075, 512), laneMat));
+  scene.add(new THREE.Mesh(band(R, 0.035, 512), laneMat));
+  scene.add(new THREE.Mesh(band(R * 1.16, 0.004, 256),
+    new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: .10, side: THREE.DoubleSide })));
+  scene.add(new THREE.Mesh(band(R * 0.66, 0.004, 256),
+    new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: .08, side: THREE.DoubleSide })));
 
-  [R * 0.62, R * 1.17].forEach(function (rr) {
-    scene.add(new THREE.Mesh(band(rr, 0.005, 256),
-      new THREE.MeshBasicMaterial({ color: INK, transparent: true, opacity: .07, side: THREE.DoubleSide })));
-  });
-  for (var i = 0; i < N; i++) {
-    var a = ang(i / N);
-    var tick = new THREE.Mesh(new THREE.PlaneGeometry(0.30, 0.014),
-      new THREE.MeshBasicMaterial({ color: INK, transparent: true, opacity: .16, side: THREE.DoubleSide }));
-    tick.rotation.x = -Math.PI / 2; tick.rotation.z = -a;
-    tick.position.set(Math.cos(a) * (R + 0.30), 0, Math.sin(a) * (R + 0.30));
-    scene.add(tick);
+  /* ── a crisp point shader used for stars, coma and both tails ── */
+  function pointMat(scale, alpha) {
+    return new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      uniforms: { uPR: { value: DPR }, uScale: { value: scale }, uAlpha: { value: alpha } },
+      vertexShader:
+        'attribute float aAge; attribute float aSize; attribute float aKind;' +
+        'varying float vAge; varying float vKind; uniform float uPR; uniform float uScale;' +
+        'void main(){ vAge=aAge; vKind=aKind;' +
+        ' vec4 mv = modelViewMatrix * vec4(position,1.0);' +
+        ' gl_PointSize = aSize * (1.0 - aAge*0.45) * uPR * uScale / -mv.z;' +
+        ' gl_Position = projectionMatrix * mv; }',
+      fragmentShader:
+        'varying float vAge; varying float vKind; uniform float uAlpha;' +
+        'void main(){ vec2 c = gl_PointCoord - 0.5; float d = length(c);' +
+        // a tight crisp core, never a soft gradient blob — density carries the glow
+        ' float core = smoothstep(0.5, 0.02, d); core = pow(core, 2.4);' +
+        ' float a = core * (1.0 - vAge); a *= a * uAlpha;' +
+        ' if (a < 0.003) discard;' +
+        ' vec3 hot  = vec3(1.00, 1.00, 0.99);' +
+        ' vec3 dust = vec3(0.66, 0.87, 1.00);' +
+        ' vec3 ion  = vec3(0.24, 0.75, 1.00);' +
+        ' vec3 col = mix(dust, ion, vKind);' +
+        ' col = mix(hot, col, clamp(vAge * 2.6, 0.0, 1.0));' +
+        ' gl_FragColor = vec4(col, a); }'
+    });
   }
 
-  var pods = [], rings = [], pops = [];
-  var podGeo = new THREE.CircleGeometry(0.13, 40), ringGeo = new THREE.RingGeometry(0.15, 0.20, 40),
-      popGeo = new THREE.RingGeometry(0.20, 0.245, 40);
+  /* ── the star field, static and faint ── */
+  var SF = 420, sg = new THREE.BufferGeometry();
+  var sp = new Float32Array(SF * 3), sa = new Float32Array(SF), ss = new Float32Array(SF), sk = new Float32Array(SF);
+  for (var i = 0; i < SF; i++) {
+    var rr = 7 + Math.random() * 16, aa = Math.random() * Math.PI * 2;
+    sp[i*3] = Math.cos(aa) * rr; sp[i*3+1] = (Math.random() - .5) * 11; sp[i*3+2] = Math.sin(aa) * rr;
+    sa[i] = 0.30 + Math.random() * 0.34; ss[i] = 1.1 + Math.random() * 2.0; sk[i] = Math.random() * .5;
+  }
+  sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
+  sg.setAttribute('aAge', new THREE.BufferAttribute(sa, 1));
+  sg.setAttribute('aSize', new THREE.BufferAttribute(ss, 1));
+  sg.setAttribute('aKind', new THREE.BufferAttribute(sk, 1));
+  scene.add(new THREE.Points(sg, pointMat(9.0, 0.5)));
+
+  /* ── the guide markers ── */
+  var pods = [], glows = [];
+  var podGeo = new THREE.RingGeometry(0.105, 0.145, 40), glowGeo = new THREE.CircleGeometry(0.30, 36);
   for (var i = 0; i < N; i++) {
     var a = ang(i / N), x = Math.cos(a) * R, z = Math.sin(a) * R;
-    var pod = new THREE.Mesh(podGeo, new THREE.MeshBasicMaterial({ color: 0xFFFFFF, transparent: true }));
-    var rng = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: INK, transparent: true, opacity: .34 }));
-    var pop = new THREE.Mesh(popGeo, new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: 0 }));
-    [pod, rng, pop].forEach(function (m, k) {
-      m.rotation.x = -Math.PI / 2; m.position.set(x, 0.002 + k * 0.001, z);
-      m.renderOrder = 3 + k; scene.add(m);
-    });
-    pods.push(pod); rings.push(rng); pops.push(pop);
+    var pod = new THREE.Mesh(podGeo, new THREE.MeshBasicMaterial({
+      color: 0xFFFFFF, transparent: true, opacity: .30 }));
+    var glow = new THREE.Mesh(glowGeo, new THREE.MeshBasicMaterial({
+      color: CYAN, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false }));
+    pod.rotation.x = -Math.PI / 2; pod.position.set(x, 0.004, z); pod.renderOrder = 4;
+    glow.rotation.x = -Math.PI / 2; glow.position.set(x, 0.003, z); glow.renderOrder = 3;
+    scene.add(pod); scene.add(glow); pods.push(pod); glows.push(glow);
   }
 
-  // the craft: the advisor, flying the sequence and collecting each guide
-  var shape = new THREE.Shape();
-  shape.moveTo( 0.46, 0.00); shape.lineTo( 0.02, 0.15); shape.lineTo(-0.20, 0.34);
-  shape.lineTo(-0.30, 0.12); shape.lineTo(-0.25, 0.00); shape.lineTo(-0.30,-0.12);
-  shape.lineTo(-0.20,-0.34); shape.lineTo( 0.02,-0.15); shape.closePath();
-  var canopyShape = new THREE.Shape();
-  canopyShape.moveTo(0.21, 0); canopyShape.lineTo(-0.02, 0.064);
-  canopyShape.lineTo(-0.09, 0); canopyShape.lineTo(-0.02, -0.064); canopyShape.closePath();
-
-  var holder = new THREE.Object3D(), banker = new THREE.Object3D();
-  holder.add(banker); scene.add(holder);
-  var hull = new THREE.Mesh(new THREE.ShapeGeometry(shape, 16),
-    new THREE.MeshBasicMaterial({ color: CYAN, side: THREE.DoubleSide }));
-  var canopy = new THREE.Mesh(new THREE.ShapeGeometry(canopyShape, 12),
-    new THREE.MeshBasicMaterial({ color: 0xFFFFFF, side: THREE.DoubleSide }));
-  hull.rotation.x = -Math.PI / 2; hull.position.y = 0.02; hull.renderOrder = 10;
-  canopy.rotation.x = -Math.PI / 2; canopy.position.y = 0.021; canopy.renderOrder = 11;
-  banker.add(hull); banker.add(canopy);
-
-  var TR = 34, trailGeo = new THREE.BufferGeometry();
-  var tPos = new Float32Array(TR * 2 * 3), tA = new Float32Array(TR * 2), tIdx = [];
-  for (var i = 0; i < TR; i++) {
-    var f = 1 - i / (TR - 1); tA[i * 2] = f; tA[i * 2 + 1] = f;
-    if (i < TR - 1) { var b = i * 2; tIdx.push(b, b + 1, b + 2, b + 1, b + 3, b + 2); }
+  /* ── the nucleus: a small irregular body, not a disc ── */
+  var nucGeo = new THREE.IcosahedronGeometry(0.20, 1);
+  var np = nucGeo.attributes.position;
+  for (var i = 0; i < np.count; i++) {                       // rough it up so it reads as rock
+    var f = 0.74 + Math.random() * 0.5;
+    np.setXYZ(i, np.getX(i) * f, np.getY(i) * f, np.getZ(i) * f);
   }
-  trailGeo.setAttribute('position', new THREE.BufferAttribute(tPos, 3));
-  trailGeo.setAttribute('aA', new THREE.BufferAttribute(tA, 1));
-  trailGeo.setIndex(tIdx);
-  var trail = new THREE.Mesh(trailGeo, new THREE.ShaderMaterial({
-    transparent: true, depthWrite: false, side: THREE.DoubleSide,
-    uniforms: { uCol: { value: new THREE.Color(CYAN) } },
-    vertexShader: 'attribute float aA; varying float vA;' +
-      'void main(){ vA=aA; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
-    fragmentShader: 'varying float vA; uniform vec3 uCol;' +
-      'void main(){ gl_FragColor = vec4(uCol, vA*vA*0.62); }'
+  np.needsUpdate = true; nucGeo.computeVertexNormals();
+  var nucleus = new THREE.Mesh(nucGeo, new THREE.MeshBasicMaterial({ color: 0xFFFFFF }));
+  nucleus.renderOrder = 12; scene.add(nucleus);
+  var halo = new THREE.Mesh(new THREE.CircleGeometry(0.46, 40), new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    uniforms: { uCol: { value: new THREE.Color(0x9FE0FF) } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
+    fragmentShader: 'varying vec2 vUv; uniform vec3 uCol;' +
+      'void main(){ float d = length(vUv - 0.5) * 2.0;' +
+      ' float a = pow(max(0.0, 1.0 - d), 3.0) * 0.34;' +
+      ' gl_FragColor = vec4(uCol, a); }'
   }));
-  trail.renderOrder = 9; scene.add(trail);
+  halo.rotation.x = -Math.PI / 2; halo.renderOrder = 11; scene.add(halo);
+
+  /* ── the tails ── */
+  var P = 7200, cur = 0;
+  var pg = new THREE.BufferGeometry();
+  var pPos = new Float32Array(P * 3), pAge = new Float32Array(P),
+      pSize = new Float32Array(P), pKind = new Float32Array(P);
+  var vx = new Float32Array(P), vy = new Float32Array(P), vz = new Float32Array(P),
+      age = new Float32Array(P), life = new Float32Array(P);
+  for (var i = 0; i < P; i++) { pAge[i] = 1; life[i] = 1; }
+  pg.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+  pg.setAttribute('aAge', new THREE.BufferAttribute(pAge, 1));
+  pg.setAttribute('aSize', new THREE.BufferAttribute(pSize, 1));
+  pg.setAttribute('aKind', new THREE.BufferAttribute(pKind, 1));
+  var tails = new THREE.Points(pg, pointMat(13.0, 0.26));
+  tails.renderOrder = 8; scene.add(tails);
+
+  function emit(t0h, t1h, n, boost) {
+    for (var k = 0; k < n; k++) {
+      var i = cur; cur = (cur + 1) % P;
+      var u = Math.random();
+      var th = t0h + (t1h - t0h) * u;                 // sub-frame position along the arc
+      var aa = ang(th), x = Math.cos(aa) * R, z = Math.sin(aa) * R;
+      var tx = -Math.sin(aa), tz = Math.cos(aa);
+      var ox = Math.cos(aa), oz = Math.sin(aa);      // outward from the hub
+      var ion = Math.random() < 0.34;
+      var slow = Math.random() < 0.06;                                   // these stay and form the coma
+      var back = slow ? 0.05 : (ion ? 2.90 : 1.90) * (0.6 + Math.random() * 0.8) * boost;
+      var out  = slow ? 0.04 : (ion ? 0.60 : 0.10) * (0.5 + Math.random());
+      var jit  = slow ? 0.11 : (ion ? 0.03 : 0.34);
+      pPos[i*3]   = x + (Math.random() - .5) * 0.10;
+      pPos[i*3+1] = (Math.random() - .5) * (ion ? 0.05 : 0.14);
+      pPos[i*3+2] = z + (Math.random() - .5) * 0.10;
+      vx[i] = -tx * back + ox * out + (Math.random() - .5) * jit;
+      vy[i] = (Math.random() - .5) * jit * 0.7;
+      vz[i] = -tz * back + oz * out + (Math.random() - .5) * jit;
+      life[i] = slow ? 0.40 + Math.random() * 0.30
+                     : (ion ? 2.6 + Math.random() * 1.6 : 4.0 + Math.random() * 2.5);
+      age[i] = 0;
+      pSize[i] = slow ? 2.2 + Math.random() * 2.4
+                      : (ion ? 1.5 + Math.random() * 1.7 : 2.4 + Math.random() * 3.6);
+      pKind[i] = ion ? 1 : 0;
+    }
+  }
 
   function size() {
     var w = host.clientWidth, h = host.clientHeight;
@@ -757,15 +824,18 @@
   }
   window.addEventListener('resize', size); size();
 
-  var LAP = 26, head = 0, collected = 0, lastStage = -1, lastIdx = -1;
-  var popT = new Array(N).fill(0), proj = new THREE.Vector3(), t0 = performance.now();
+  var LAP = 30, head = 0, collected = 0, lastStage = -1, lastIdx = -1;
+  var pulse = new Array(N).fill(0), proj = new THREE.Vector3(), t0 = performance.now();
+  var prevHead = 0;
+  var lastCount = -1, hSuffix = document.createElement('span');
+  hSuffix.textContent = '/11';
 
   function placeChips() {
     var w = host.clientWidth, h = host.clientHeight;
     STAGE_FIRST.forEach(function (gi, si) {
       var a = ang(gi / N);
-      proj.set(Math.cos(a) * R * 1.30, 0, Math.sin(a) * R * 1.30).project(camera);
-      var cw = chips[si].offsetWidth / 2 + 2, ch = chips[si].offsetHeight / 2 + 2;
+      proj.set(Math.cos(a) * R * 1.22, 0, Math.sin(a) * R * 1.22).project(camera);
+      var cw = chips[si].offsetWidth / 2 + 3, ch = chips[si].offsetHeight / 2 + 3;
       chips[si].style.left = Math.max(cw, Math.min(w - cw, (proj.x * .5 + .5) * w)) + 'px';
       chips[si].style.top  = Math.max(ch, Math.min(h - ch, (-proj.y * .5 + .5) * h)) + 'px';
     });
@@ -775,47 +845,61 @@
   placeChips();
 
   (function frame(now) {
-    // the first rAF timestamp is the FRAME START, which can precede the
-    // performance.now() used to seed t0 — so dt arrives negative and drives
-    // head, and then the stage index, below zero. Clamp it.
+    // the first rAF timestamp is the FRAME START and can precede the seeded
+    // performance.now(), so dt arrives negative. Clamp both ends.
     var dt = Math.min(Math.max((now - t0) / 1000, 0), .05); t0 = now;
+
     var local = (head * N) % 1;
-    var speed = 0.42 + 0.58 * Math.pow(Math.sin(local * Math.PI), 0.75);
+    var speed = 0.46 + 0.54 * Math.pow(Math.sin(local * Math.PI), 0.8);
     head = (head + (dt / LAP) * speed) % 1;
     if (head < 0) head += 1;
-
     var idx = ((Math.floor(head * N) % N) + N) % N;
+
+    var a = ang(head), x = Math.cos(a) * R, z = Math.sin(a) * R;
+    var tx = -Math.sin(a), tz = Math.cos(a);                 // direction of travel
+
     if (idx !== lastIdx) {
-      if (lastIdx !== -1) popT[lastIdx] = 1;
+      if (lastIdx !== -1) { pulse[lastIdx] = 1; emit(head, head, 150, 1.8); }    // pickup flare
       lastIdx = idx; collected = idx;
-      if (idx === 0) { popT.fill(0); collected = 0; }
+      if (idx === 0) { pulse.fill(0); collected = 0; }
     }
     laneMat.uniforms.uHead.value = head;
 
-    var p = pt(head);
-    holder.position.set(p.x, 0, p.z);
-    holder.rotation.y = -ang(head) - Math.PI / 2;
-    banker.rotation.x = 0.55 * (1 - (speed - 0.42) / 0.58) + 0.22;
+    nucleus.position.set(x, 0, z);
+    nucleus.rotation.x += dt * 1.1; nucleus.rotation.y += dt * 1.6;
+    halo.position.set(x, 0.001, z);
+    halo.scale.setScalar(0.94 + Math.sin(now / 300) * 0.06);
 
-    var arr = trailGeo.attributes.position.array;
-    for (var i = 0; i < TR; i++) {
-      var t = head - (i / (TR - 1)) * 0.052, wgt = 0.075 * (1 - i / (TR - 1)) + 0.006;
-      var a = ang(t), c = Math.cos(a), s = Math.sin(a);
-      arr[i*6] = (R-wgt)*c; arr[i*6+1] = 0.012; arr[i*6+2] = (R-wgt)*s;
-      arr[i*6+3] = (R+wgt)*c; arr[i*6+4] = 0.012; arr[i*6+5] = (R+wgt)*s;
+    var span = head - prevHead; if (span < -0.5) span += 1;   // the arc covered this frame
+    emit(prevHead, prevHead + span, Math.round(86 + 74 * speed), 1);
+    prevHead = head;
+
+    for (var i = 0; i < P; i++) {
+      if (age[i] >= life[i]) { pAge[i] = 1; continue; }
+      age[i] += dt;
+      var px = pPos[i*3], pz = pPos[i*3+2];
+      var rl = Math.sqrt(px * px + pz * pz) || 1;
+      var push = (pKind[i] > .5 ? 2.0 : 0.26) * dt;         // solar wind, straight out from the hub
+      vx[i] += (px / rl) * push; vz[i] += (pz / rl) * push;
+      var drag = 1 - (pKind[i] > .5 ? 0.07 : 0.12) * dt;
+      vx[i] *= drag; vy[i] *= drag; vz[i] *= drag;
+      pPos[i*3]   = px + vx[i] * dt;
+      pPos[i*3+1] = pPos[i*3+1] + vy[i] * dt;
+      pPos[i*3+2] = pz + vz[i] * dt;
+      pAge[i] = Math.min(1, age[i] / life[i]);
     }
-    trailGeo.attributes.position.needsUpdate = true;
+    pg.attributes.position.needsUpdate = true;
+    pg.attributes.aAge.needsUpdate = true;
+    pg.attributes.aSize.needsUpdate = true;
+    pg.attributes.aKind.needsUpdate = true;
 
     for (var i = 0; i < N; i++) {
       var got = i < collected;
       pods[i].material.color.setHex(got ? CYAN : 0xFFFFFF);
-      rings[i].material.color.setHex(got ? CYAN : INK);
-      rings[i].material.opacity = got ? .7 : .34;
-      if (popT[i] > 0) {
-        popT[i] = Math.max(0, popT[i] - dt * 1.7);
-        pops[i].scale.setScalar(1 + (1 - popT[i]) * 1.5);
-        pops[i].material.opacity = popT[i] * .55;
-      } else { pops[i].material.opacity = 0; }
+      pods[i].material.opacity = got ? .95 : .30;
+      if (pulse[i] > 0) pulse[i] = Math.max(0, pulse[i] - dt * 1.5);
+      glows[i].material.opacity = (got ? .16 : 0) + pulse[i] * .55;
+      glows[i].scale.setScalar(1 + (1 - pulse[i]) * pulse[i] * 2.4);
     }
 
     var si = GUIDE_STAGE[idx];
@@ -826,7 +910,11 @@
         el.dataset.on = k === si ? '1' : '0'; el.dataset.done = k < si ? '1' : '0';
       });
     }
-    hN.innerHTML = String(collected).padStart(2, '0') + '<span>/11</span>';
+    if (collected !== lastCount) {
+      lastCount = collected;
+      hN.textContent = String(collected).padStart(2, '0');
+      hN.appendChild(hSuffix);
+    }
 
     placeChips();
     renderer.render(scene, camera);

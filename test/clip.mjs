@@ -9,7 +9,7 @@ await p.goto(process.argv[2],{waitUntil:'networkidle0'});
 await p.evaluate(async()=>{ const H=document.body.scrollHeight;
   for(let y=0;y<H;y+=600){ window.scrollTo(0,y); await new Promise(r=>setTimeout(r,60)); }
   window.scrollTo(0,0); });
-await new Promise(r=>setTimeout(r,1200));
+await new Promise(r=>setTimeout(r,Number(process.argv[5]||1200)));
 const sel=process.argv[4];
 const el=await p.$(sel);
 await el.screenshot({path:process.argv[3]});
