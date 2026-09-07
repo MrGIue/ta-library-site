@@ -252,6 +252,21 @@
 .ta-lib .offer .buy .btn { width: 100%; margin-top: 22px; }
 .ta-lib .offer .buy .fine { font-size: 13px; color: var(--ink-muted); margin-top: 14px; }
 
+.ta-lib .offer .grt { grid-column: 1 / -1; margin-top: 4px; padding: 18px 22px;
+  background: var(--wash); border: 1px dashed rgba(0,161,211,.45); border-radius: 14px;
+  font-size: 15px; color: var(--ink-body); }
+.ta-lib .offer .grt b { font-family: var(--head); color: var(--ink); }
+
+.ta-lib .exit .box { display: grid; grid-template-columns: minmax(0,1fr) auto;
+  gap: clamp(24px,3vw,48px); align-items: center; }
+.ta-lib .exit h2 { font-size: clamp(24px,2.7vw,38px); max-width: 18ch; }
+.ta-lib .exit p { margin-top: 16px; max-width: 56ch; font-size: 16px; }
+.ta-lib .exit .big { padding: 19px 30px; font-size: 16px; white-space: nowrap; }
+@media (max-width: 780px) {
+  .ta-lib .exit .box { grid-template-columns: 1fr; }
+  .ta-lib .exit .big { justify-content: center; }
+}
+
 /* ══ faq ═══════════════════════════════════════════════ */
 .ta-lib .faq h2 { font-size: clamp(26px,3vw,42px); }
 .ta-lib .faq .list { margin-top: clamp(32px,3.4vw,48px); border-top: 1px solid var(--hair); }
@@ -315,16 +330,16 @@
         <div>
           <p class="eyebrow">LinkedIn Marketing For Financial Advisors</p>
           <h1>Stop Collecting LinkedIn Advice. <em>Start Running The Sequence.</em></h1>
-          <p class="sub">Eleven playbooks we run for advisors ourselves, arranged in the one order that makes them work. The order is the part nobody sells you.</p>
+          <p class="sub">Eleven playbooks we run for advisors ourselves, numbered so you always know which one is next. {{PAGES}} pages, one download, and a first stage you can finish this afternoon.</p>
           <div class="ctas">
             <a class="btn" href="{{CHECKOUT}}">Get The Library — {{PRICE}}</a>
             <a class="btn2" href="#inside">See What Is Inside</a>
           </div>
           <p class="note">Instant download. Eleven guides, seven stages, one price.</p>
           <div class="trust">
+            <span>11 PDFs, {{PAGES}} Pages</span>
             <span>Written For Life And Annuity Advisors</span>
-            <span>Built From Client Campaigns</span>
-            <span>Yours To Keep</span>
+            <span>Built From Live Client Campaigns</span>
           </div>
         </div>
 
@@ -395,13 +410,13 @@
       <h2>One Price. The Whole Run.</h2>
       <div class="box">
         <dl>
-          <div class="row"><dt>Eleven Guides<small>Profile, content, engagement, prospecting, offers, objections and proof.</small></dt><dd>11 Documents</dd></div>
+          <div class="row"><dt>Eleven Guides<small>Profile, content, engagement, prospecting, offers, objections and proof.</small></dt><dd>11 PDFs · {{PAGES}} Pages</dd></div>
           <div class="row"><dt>The Sequence Map<small>Which stage runs first, and what each one has to finish before the next earns its time.</small></dt><dd>7 Stages</dd></div>
           <div class="row"><dt>The 30-Day Content Plan<small>A month of posts already decided, so the daily question stops being what to write.</small></dt><dd>30 Days</dd></div>
           <div class="row"><dt>The Offer Scorecard<small>Score the offer you already have before you write another word of copy for it.</small></dt><dd>1 Worksheet</dd></div>
           <div class="row"><dt>The Prompt Library<small>The prompts that turn one idea into a week of posts in your own voice.</small></dt><dd>Included</dd></div>
         </dl>
-        <div class="total"><dt>Everything Above<small>Instant download. Yours to keep.</small></dt><dd>{{PRICE}}</dd></div>
+        <div class="total"><dt>Everything Above<small>{{PAGES}} pages for {{PRICE}}, which is about {{PER_PAGE}} a page. One download, yours to keep.</small></dt><dd>{{PRICE}}</dd></div>
       </div>
     </div>
   </section>
@@ -446,19 +461,21 @@
           <p class="eyebrow">The Offer</p>
           <h2>Eleven Guides. One Sequence. {{PRICE}}.</h2>
           <ul>
-            <li>All eleven guides, downloaded the moment you pay.</li>
-            <li>The stage map that says which one to open first.</li>
+            <li>Eleven PDFs, {{PAGES}} pages, numbered in running order.</li>
+            <li>Stage one is a twelve-page profile pass. You can finish it today.</li>
+            <li>Thirty days of posts already decided, so you stop staring at a blank box.</li>
+            <li>The four objections that come back most, with the words that survive them.</li>
             <li>Written for life and annuity advisors, not for founders or coaches.</li>
-            <li>Built from campaigns we run for paying clients right now.</li>
-            <li>Yours to keep, with no subscription attached to it.</li>
+            <li>Yours to keep. No subscription, no upsell wall between the guides.</li>
           </ul>
         </div>
         <div class="buy">
           <div class="p">{{PRICE}}</div>
           <p class="was">One payment. Instant download.</p>
-          <a class="btn" href="{{CHECKOUT}}">Get The Library</a>
+          <a class="btn" href="{{CHECKOUT}}">Get The Library — {{PRICE}}</a>
           <p class="fine">Prefer we run it for you? <a href="{{CALL_URL}}" style="text-decoration:underline;text-underline-offset:3px">Book a strategy call</a>.</p>
         </div>
+        <!--GUARANTEE-->
       </div>
     </div>
   </section>
@@ -486,9 +503,28 @@
           <div class="a"><div><p>That is the done-for-you service, and it is the thing the results on this page came from. Read the Library first. If you would rather hand the whole sequence over, <a href="{{CALL_URL}}" style="text-decoration:underline;text-underline-offset:3px">book a strategy call</a>.</p></div></div>
         </div>
         <div class="q">
+          <button type="button" aria-expanded="false">What Do I Actually Receive?<span class="pm" aria-hidden="true"></span></button>
+          <div class="a"><div><p>Eleven PDFs, {{PAGES}} pages in total, numbered in the order you run them. They download the moment the payment clears and they are yours to keep on any device.</p></div></div>
+        </div>
+        <!--GUARANTEE_FAQ-->
+        <div class="q">
           <button type="button" aria-expanded="false">Do I Need To Post Every Day?<span class="pm" aria-hidden="true"></span></button>
           <div class="a"><div><p>No. The engagement guide is built around a fixed block of about twenty minutes, and the content plan gives you thirty days of posts you decided once instead of every morning.</p></div></div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ the exit ══ -->
+  <section class="wash exit">
+    <div class="wrap">
+      <div class="box">
+        <div>
+          <p class="eyebrow">Not Buying Today</p>
+          <h2>Then Take Stage One For Nothing.</h2>
+          <p>The profile guide is the first of the eleven and it is the one everything else depends on. Read it, run it, and judge the other ten by what it does for you.</p>
+        </div>
+        <a class="btn2 big" href="{{FREE_URL}}">Get The Profile Guide Free</a>
       </div>
     </div>
   </section>
@@ -502,7 +538,7 @@
         <a class="btn" href="{{CHECKOUT}}">Get The Library — {{PRICE}}</a>
         <a class="btn2" href="{{CALL_URL}}">Book A Strategy Call</a>
       </div>
-      <p class="fine">Instant download. Yours to keep.</p>
+      <p class="fine">Instant download. {{PAGES}} pages. Yours to keep.</p>
     </div>
   </section>
 </div>

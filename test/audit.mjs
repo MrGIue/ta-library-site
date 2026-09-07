@@ -43,15 +43,30 @@ const out=await p.evaluate(()=>{
       size:+size.toFixed(1), wt, r:+r.toFixed(2), need});
   });
   // grid uniformity: any last row left partly empty
+  // group children by their actual top offset, so an item spanning every column
+  // counts as a full row instead of reading as a stranded single
   const grids=[...document.querySelectorAll('*')].filter(e=>getComputedStyle(e).display==='grid'&&e.children.length>2)
-    .map(g=>{const cs=getComputedStyle(g); const cols=cs.gridTemplateColumns.split(' ').filter(Boolean).length;
-      const n=g.children.length; const lastRow=n%cols||cols;
-      return {cls:g.className||g.tagName, cols, items:n, lastRow, stranded: cols>1 && lastRow===1 && n>cols};});
+    .map(g=>{
+      const cs=getComputedStyle(g);
+      const cols=cs.gridTemplateColumns.split(' ').filter(Boolean).length;
+      const gw=g.getBoundingClientRect().width;
+      const rows=new Map();
+      [...g.children].forEach(c=>{
+        const r=c.getBoundingClientRect();
+        if(!r.width) return;
+        const key=Math.round(r.top);
+        rows.set(key,(rows.get(key)||0)+r.width);
+      });
+      const keys=[...rows.keys()].sort((a,b)=>a-b);
+      const lastFill=keys.length?rows.get(keys[keys.length-1])/gw:1;
+      return {cls:g.className||g.tagName, cols, items:g.children.length,
+              rows:keys.length, lastFill:+lastFill.toFixed(2),
+              stranded: cols>1 && keys.length>1 && lastFill < 0.45};});
   return {checked:seen.length, fails, grids};
 });
 console.log(`contrast: ${out.checked} text nodes checked, ${out.fails.length} failures`);
 out.fails.forEach(f=>console.log(`  FAIL ${f.r}:1 (need ${f.need})  ${f.size}px/${f.wt}  ${f.col} on ${f.bg}  "${f.t}"`));
 console.log('\ngrids:');
-out.grids.forEach(g=>console.log(`  ${String(g.cls).slice(0,28).padEnd(28)} cols=${g.cols} items=${g.items} lastRow=${g.lastRow} ${g.stranded?'STRANDED':'ok'}`));
+out.grids.forEach(g=>console.log(`  ${String(g.cls).slice(0,28).padEnd(28)} cols=${g.cols} items=${g.items} rows=${g.rows} lastRowFill=${g.lastFill} ${g.stranded?'STRANDED':'ok'}`));
 await b.close();
 process.exit(out.fails.length||out.grids.some(g=>g.stranded)?1:0);

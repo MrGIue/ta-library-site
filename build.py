@@ -16,6 +16,21 @@ CHECKOUT = "https://trainedadvisor.com/pay/guide-bundle"   # 404 until Joe makes
 CALL_URL = "https://trainedadvisor.com/book-a-call"
 PROOF_URL = "https://trainedadvisor.com/testimonials"
 
+# The free stage-one door, live and already capturing email (verified 200, 2026-09-07).
+# It exists so the ~97% who do not buy today still leave an address, which was the
+# ratified 2026-09-04 decision and had been dropped in the rebuild.
+FREE_URL = "https://trainedadvisor.com/resources/linkedin-profile-update"
+
+# Counted from the eleven shipped PDFs on 2026-09-07, not estimated.
+PAGES = 143
+PER_PAGE = "19¢"          # 27 / 143
+
+# JOE'S CALL. TA has never published a refund policy on a digital product. A $27
+# impulse buy converts better with one, and it is cheap risk reversal. Set to None
+# to remove it everywhere on the page.
+GUARANTEE = ("Read it. If it does not earn its $27, reply to your receipt within "
+             "30 days and we refund it. No form, no questions.")
+
 # slug, title, stage, the line that earns the click
 GUIDES = [
     ("linkedin-profile-update", "The LinkedIn Profile Update Guide", "Profile",
@@ -74,10 +89,21 @@ def cards() -> str:
 def main() -> None:
     html = TEMPLATE.read_text(encoding="utf-8")
     html = html.replace("<!--GUIDE_CARDS-->", cards())
+    guarantee_block = "" if not GUARANTEE else (
+        f'<p class="grt"><b>Our Guarantee.</b> {GUARANTEE}</p>')
+    guarantee_faq = "" if not GUARANTEE else (
+        '<div class="q"><button type="button" aria-expanded="false">'
+        'What If It Is Not For Me?<span class="pm" aria-hidden="true"></span></button>'
+        f'<div class="a"><div><p>{GUARANTEE}</p></div></div></div>')
     html = (html.replace("{{PRICE}}", PRICE)
                 .replace("{{CHECKOUT}}", CHECKOUT)
                 .replace("{{CALL_URL}}", CALL_URL)
-                .replace("{{PROOF_URL}}", PROOF_URL))
+                .replace("{{PROOF_URL}}", PROOF_URL)
+                .replace("{{FREE_URL}}", FREE_URL)
+                .replace("{{PAGES}}", str(PAGES))
+                .replace("{{PER_PAGE}}", PER_PAGE)
+                .replace("<!--GUARANTEE-->", guarantee_block)
+                .replace("<!--GUARANTEE_FAQ-->", guarantee_faq))
     left = re.findall(r"\{\{[A-Z_]+\}\}|<!--[A-Z_]+-->", html)
     if left:
         sys.exit(f"unreplaced placeholders: {sorted(set(left))}")
