@@ -1,0 +1,728 @@
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,500;0,600;0,700;0,800;1,700;1,800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+/* DIRECTION C — LIT & LAYERED
+   The approved page with real dimensionality. Covers sit in spotlit wells
+   with cast shadows and lift on hover, stage numerals sit large behind the
+   headings, panels overlap the bands they sit on. Warmer, more tactile. */
+.tarh{--navy:#0A1628;--navy-2:#0E1B30;--navy-3:#121F36;
+ --paper:#FAFBFD;--wash:#EDF5FA;--card:#FFFFFF;--rule:rgba(14,27,48,.09);
+ --cyan:#00A1D3;--cyan-hover:#0088B5;--electric:#3CC0F0;--cyan-bright:#44C7F4;
+ --head:#0A1628;--body:#4A5568;--muted:#68778B;
+ --head-dark:#EFF1FF;--body-dark:rgba(240,246,252,.80);--muted-dark:rgba(240,246,252,.56);
+ --line:rgba(255,255,255,.12);--line-soft:rgba(255,255,255,.06);
+ --lift:0 30px 60px -28px rgba(10,22,40,.42);--lift-hi:0 44px 80px -30px rgba(10,22,40,.5);
+ --maxw:1240px;--ease:cubic-bezier(.16,1,.3,1);
+ background:var(--paper);color:var(--body);font-family:"DM Sans",system-ui,sans-serif;
+ font-size:clamp(1rem,.96rem + .25vw,1.125rem);line-height:1.65;-webkit-font-smoothing:antialiased}
+.tarh *{box-sizing:border-box}
+.tarh h1,.tarh h2,.tarh h3,.tarh h4{font-family:"Plus Jakarta Sans",sans-serif;line-height:1.09;
+ letter-spacing:-.025em;margin:0;font-weight:800;color:var(--head)}
+.tarh h3,.tarh h4{font-weight:700;letter-spacing:-.014em}
+.tarh p{margin:0}.tarh img{max-width:100%;display:block}.tarh a{color:inherit;text-decoration:none}
+.tarh :focus-visible{outline:3px solid var(--electric);outline-offset:3px}
+.tarh .wrap{max-width:var(--maxw);margin-inline:auto;padding-inline:clamp(1.25rem,4vw,3rem)}
+.tarh .block{padding:clamp(4.5rem,9vw,144px) 0}
+.tarh em{font-style:italic;color:var(--electric);font-weight:800}
+.tarh .ar{transition:transform .2s var(--ease)}
+.tarh .eyebrow{font-family:"Plus Jakarta Sans",sans-serif;font-size:.74rem;font-weight:700;letter-spacing:.18em;
+ text-transform:uppercase;margin:0 0 1.1rem;color:var(--cyan);display:inline-flex;align-items:center;gap:.7rem}
+.tarh .eyebrow::before{content:"";width:26px;height:2px;background:var(--electric);border-radius:2px}
+.tarh .shead{max-width:68ch;margin-bottom:clamp(2.6rem,4.5vw,3.6rem)}
+.tarh .shead h2{font-size:clamp(2.05rem,1.35rem + 2.4vw,3.2rem)}
+.tarh .shead > p:not(.eyebrow){margin-top:1.1rem;font-size:1.08rem}
+.tarh .btn{display:inline-flex;align-items:center;gap:.55rem;font-family:"Plus Jakarta Sans",sans-serif;
+ font-weight:700;font-size:1rem;border-radius:14px;padding:1.05rem 1.8rem;background:var(--electric);
+ color:var(--navy);box-shadow:0 18px 40px -16px rgba(60,192,240,.8),inset 0 1px 0 rgba(255,255,255,.5);
+ transition:background .2s var(--ease),transform .2s var(--ease),box-shadow .2s var(--ease)}
+.tarh .btn:hover{background:#5AD0F5;transform:translateY(-3px);box-shadow:0 26px 50px -18px rgba(60,192,240,.9)}
+.tarh .btn:hover .ar{transform:translateX(3px)}
+
+.tarh .hero{background:var(--navy);position:relative;overflow:hidden;padding:clamp(4.5rem,9vw,8.5rem) 0 clamp(5rem,9vw,7.5rem)}
+.tarh .hero::before{content:"";position:absolute;inset:0;
+ background:radial-gradient(900px 620px at 50% 4%,rgba(0,161,211,.3),transparent 62%)}
+.tarh .hero::after{content:"";position:absolute;inset:0;opacity:.5;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);
+ background-size:30px 30px;-webkit-mask-image:radial-gradient(76% 66% at 50% 32%,#000,transparent);mask-image:radial-gradient(76% 66% at 50% 32%,#000,transparent)}
+.tarh .hero .wrap{position:relative;z-index:2}
+.tarh .hero .eyebrow{color:var(--cyan-bright)}
+.tarh .hero h1{color:var(--head-dark);font-size:clamp(2.5rem,1.35rem + 4.6vw,4.6rem);max-width:17ch}
+.tarh .hero h1 em{display:block;color:var(--cyan-bright);text-shadow:0 0 48px rgba(68,199,244,.3)}
+.tarh .hero-sub{color:var(--body-dark);font-size:clamp(1.08rem,1rem + .45vw,1.35rem);max-width:62ch;margin-top:1.6rem}
+.tarh .qa{margin-top:2.8rem;background:linear-gradient(180deg,rgba(18,31,54,.95),rgba(10,22,40,.95));
+ border:1px solid var(--line);border-radius:22px;padding:clamp(1.6rem,3vw,2.3rem);max-width:880px;
+ box-shadow:0 34px 70px -34px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.06)}
+.tarh .qa .lab{font-family:"Plus Jakarta Sans",sans-serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+ color:var(--cyan-bright);font-weight:700;margin-bottom:.9rem}
+.tarh .qa p{color:var(--body-dark);font-size:1.05rem}.tarh .qa p+p{margin-top:.8rem}
+.tarh .qa a{color:var(--cyan-bright);border-bottom:1px solid rgba(68,199,244,.42)}
+.tarh .jump{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:2.5rem}
+.tarh .jump a{font-family:"Plus Jakarta Sans",sans-serif;font-weight:600;font-size:.9rem;color:var(--body-dark);
+ background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:100px;padding:.58rem 1.15rem;transition:.2s}
+.tarh .jump a:hover{border-color:var(--cyan-bright);color:var(--cyan-bright);background:rgba(60,192,240,.1)}
+
+/* chooser lifts off the band it sits on */
+.tarh .chooser{background:linear-gradient(165deg,#0E1B30,#0A1628);border-radius:30px;overflow:hidden;position:relative;
+ padding:clamp(2rem,4vw,3.2rem) clamp(1.4rem,3.5vw,3.2rem);margin-top:-1rem;
+ box-shadow:0 46px 90px -40px rgba(10,22,40,.7),inset 0 1px 0 rgba(255,255,255,.07)}
+.tarh .chooser::before{content:"";position:absolute;inset:0;background:radial-gradient(720px 400px at 80% 0%,rgba(0,161,211,.3),transparent 66%)}
+.tarh .chooser>*{position:relative;z-index:2}
+.tarh .chooser-lab{font-family:"Plus Jakarta Sans",sans-serif;font-size:.74rem;font-weight:700;letter-spacing:.18em;
+ text-transform:uppercase;color:var(--cyan-bright);margin-bottom:2rem}
+.tarh .route{display:grid;gap:.9rem;padding:clamp(1.7rem,3vw,2.3rem) 0;border-top:1px solid var(--line-soft);transition:padding-left .3s var(--ease)}
+@media(min-width:900px){.tarh .route{grid-template-columns:auto minmax(0,1fr) auto;gap:clamp(1.6rem,3vw,2.8rem);align-items:center}}
+.tarh .route:last-child{border-bottom:1px solid var(--line-soft)}
+.tarh .route:hover{padding-left:.7rem}
+.tarh .route .n{font-family:"Plus Jakarta Sans",sans-serif;font-weight:800;font-size:clamp(2.4rem,1.4rem + 2.6vw,3.6rem);
+ line-height:1;color:rgba(60,192,240,.3);transition:color .3s var(--ease)}
+.tarh .route:hover .n{color:var(--electric)}
+.tarh .said{display:block;font-family:"Plus Jakarta Sans",sans-serif;font-weight:800;letter-spacing:-.022em;
+ font-size:clamp(1.35rem,1.05rem + 1.3vw,2.15rem);line-height:1.15;color:var(--head-dark)}
+.tarh .then{display:block;margin-top:.6rem;font-size:1.02rem;color:var(--muted-dark);max-width:52ch}
+.tarh .route .go{display:inline-flex;align-items:center;gap:.5rem;white-space:nowrap;font-family:"Plus Jakarta Sans",sans-serif;
+ font-weight:700;font-size:1rem;color:var(--navy);background:var(--electric);border-radius:100px;padding:.82rem 1.45rem;
+ box-shadow:0 16px 34px -16px rgba(60,192,240,.9);transition:.2s var(--ease)}
+.tarh .route:hover .go{background:#5AD0F5;transform:translateX(3px)}
+
+.tarh .toolband{background:var(--wash)}
+.tarh .tools{display:grid;gap:clamp(1.8rem,3vw,2.6rem)}
+@media(min-width:940px){.tarh .tools{grid-template-columns:1fr 1fr;align-items:stretch}}
+.tarh .tool{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--rule);border-radius:26px;
+ overflow:hidden;box-shadow:var(--lift);transition:transform .28s var(--ease),box-shadow .28s var(--ease)}
+.tarh .tool:hover{transform:translateY(-6px);box-shadow:var(--lift-hi)}
+.tarh .tool-visual{height:420px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;
+ padding:2rem;background:radial-gradient(130% 80% at 50% -12%,#FFFFFF 0%,#DEEBF4 74%);
+ border-bottom:1px solid var(--rule)}
+.tarh .tool-visual::after{content:"";position:absolute;left:50%;bottom:12%;transform:translateX(-50%);width:54%;height:24px;
+ background:radial-gradient(closest-side,rgba(10,22,40,.32),transparent);filter:blur(9px)}
+.tarh .tool-visual>*{position:relative;z-index:2}
+.tarh .tool-body{padding:clamp(1.9rem,3.2vw,2.6rem);display:flex;flex-direction:column;flex:1}
+.tarh .tag{align-self:flex-start;font-family:"Plus Jakarta Sans",sans-serif;font-size:.7rem;font-weight:700;
+ letter-spacing:.14em;text-transform:uppercase;color:var(--head);background:rgba(60,192,240,.16);
+ border-radius:100px;padding:.44rem .95rem;margin-bottom:1.15rem}
+.tarh .tool-body h3{font-size:clamp(1.55rem,1.2rem + 1.1vw,2.1rem)}
+.tarh .tool-body>p{margin-top:.95rem;color:var(--body)}
+.tarh .tool-list{list-style:none;margin:1.5rem 0 0;padding:0;display:grid;gap:.68rem}
+.tarh .tool-list li{position:relative;padding-left:1.9rem;font-size:.98rem;color:var(--body)}
+.tarh .tool-list li::before{content:"";position:absolute;left:0;top:.15em;width:1.2rem;height:1.2rem;border-radius:50%;
+ background:rgba(60,192,240,.18)}
+.tarh .tool-list li::after{content:"";position:absolute;left:.32rem;top:.52em;width:.56rem;height:.3rem;
+ border-left:2px solid var(--cyan);border-bottom:2px solid var(--cyan);transform:rotate(-45deg)}
+.tarh .tool-foot{margin-top:auto;padding-top:2rem}
+.tarh .tool-note{margin-top:.9rem;font-size:.88rem;color:var(--muted)}
+.tarh .score{width:100%;max-width:340px;background:linear-gradient(180deg,#12213A,#0A1628);
+ border:1px solid rgba(10,22,40,.14);border-radius:18px;padding:1.6rem;
+ box-shadow:0 30px 52px -22px rgba(10,22,40,.55),0 3px 10px rgba(10,22,40,.18),inset 0 1px 0 rgba(255,255,255,.08)}
+.tarh .score-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.35rem}
+.tarh .score-num{font-family:"Plus Jakarta Sans",sans-serif;font-weight:800;font-size:3.2rem;color:var(--cyan-bright);line-height:1}
+.tarh .score-num span{font-size:1.15rem;color:var(--muted-dark)}
+.tarh .score-lab{font-family:"Plus Jakarta Sans",sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted-dark)}
+.tarh .score-row{display:flex;align-items:center;gap:.8rem;margin-bottom:.76rem}
+.tarh .score-row b{font-weight:500;font-size:.82rem;color:var(--body-dark);width:82px;flex:none}
+.tarh .bar{flex:1;height:8px;background:rgba(255,255,255,.09);border-radius:100px;overflow:hidden}
+.tarh .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--electric));border-radius:100px}
+.tarh .bookshot{position:relative}
+.tarh .bookshot img{width:clamp(172px,16.5vw,214px);border-radius:9px;
+ box-shadow:0 34px 52px -20px rgba(10,22,40,.55),0 4px 12px rgba(10,22,40,.2),
+ 0 0 0 1.5px var(--electric),0 0 26px -6px rgba(60,192,240,.45)}
+.tarh .bookshot .badge{position:absolute;top:-14px;right:-14px;background:var(--cyan);color:#fff;
+ font-family:"Plus Jakarta Sans",sans-serif;font-size:.68rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+ padding:.5rem .82rem;border-radius:10px;transform:rotate(3deg);box-shadow:0 18px 40px -14px rgba(0,161,211,.6)}
+
+/* stages: big ghosted numeral behind the heading, spotlit covers */
+.tarh .stage{position:relative}
+.tarh .stage+.stage{margin-top:clamp(3.8rem,6.5vw,5.8rem)}
+.tarh .stage-head{position:relative;padding-top:2rem;margin-bottom:2.2rem;display:grid;gap:.85rem;
+ border-top:1px solid var(--rule)}
+@media(min-width:900px){.tarh .stage-head{grid-template-columns:minmax(0,25rem) minmax(0,1fr);gap:2.6rem;align-items:start}}
+.tarh .stage-n{font-family:"Plus Jakarta Sans",sans-serif;font-weight:800;font-size:.74rem;letter-spacing:.18em;
+ text-transform:uppercase;color:var(--cyan);margin-bottom:.5rem}
+.tarh .stage-head h3{font-size:clamp(1.5rem,1.2rem + 1vw,2.05rem)}
+.tarh .stage-head p{color:var(--body);font-size:1rem}
+.tarh .cards{display:grid;gap:1.5rem;align-items:stretch}
+@media(min-width:640px){.tarh .cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:1040px){.tarh .cards{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .tarh .cards.n2{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .tarh .cards.n3{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.tarh .card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--rule);border-radius:22px;
+ overflow:hidden;box-shadow:0 4px 18px rgba(10,22,40,.07);
+ transition:transform .28s var(--ease),box-shadow .28s var(--ease)}
+.tarh .card:hover{transform:translateY(-7px);box-shadow:var(--lift-hi)}
+.tarh .card-cover{position:relative;padding:1.9rem 1.6rem 0;display:flex;justify-content:center;overflow:hidden;
+ background:radial-gradient(130% 80% at 50% -12%,#FFFFFF 0%,#DEEBF4 74%)}
+.tarh .card-cover::before{content:"";position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);width:66%;height:22px;
+ background:radial-gradient(closest-side,rgba(10,22,40,.34),transparent);filter:blur(8px)}
+.tarh .card-cover img{position:relative;z-index:2;width:100%;max-width:186px;border-radius:6px 6px 0 0;
+ box-shadow:0 26px 40px -18px rgba(10,22,40,.6),0 3px 10px rgba(10,22,40,.2);
+ transition:transform .3s var(--ease)}
+.tarh .card:hover .card-cover img{transform:translateY(-6px)}
+@media(min-width:1040px){.tarh .cards.n3 .card-cover img{max-width:212px}.tarh .cards.n2 .card-cover img{max-width:248px}}
+.tarh .card-body{padding:1.45rem 1.5rem 1.6rem;display:flex;flex-direction:column;flex:1}
+.tarh .card-meta{font-family:"Plus Jakarta Sans",sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.14em;
+ text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+.tarh .card h4{font-size:1.14rem;line-height:1.24}
+.tarh .card-body>p{margin-top:.62rem;font-size:.94rem;line-height:1.55;color:var(--body)}
+.tarh .card-cta{margin-top:auto;padding-top:1.3rem;font-family:"Plus Jakarta Sans",sans-serif;font-weight:700;
+ font-size:.94rem;color:var(--head);display:inline-flex;align-items:center;gap:.45rem}
+.tarh .card-cta .ar{color:var(--electric)}
+.tarh .card:hover .card-cta .ar{transform:translateX(3px)}
+
+.tarh .moreband{background:var(--navy-3);color:var(--body-dark)}
+.tarh .moreband h2,.tarh .moreband h3{color:var(--head-dark)}
+.tarh .moreband .eyebrow{color:var(--cyan-bright)}
+.tarh .moreband em{color:var(--cyan-bright)}
+.tarh .moreband .shead>p{color:var(--body-dark)}
+.tarh .rows{border-top:1px solid var(--line)}
+.tarh .row{display:grid;gap:.55rem;padding:2rem 0;border-bottom:1px solid var(--line);transition:padding-left .25s var(--ease)}
+@media(min-width:860px){.tarh .row{grid-template-columns:minmax(0,20rem) minmax(0,1fr) auto;gap:2.6rem;align-items:center;padding:2.2rem 0}}
+.tarh .row:hover{padding-left:.6rem}
+.tarh .row h3{font-size:1.3rem}.tarh .row p{color:var(--muted-dark);font-size:.99rem}
+.tarh .row .go{display:inline-flex;align-items:center;gap:.45rem;white-space:nowrap;font-family:"Plus Jakarta Sans",sans-serif;
+ font-weight:700;font-size:.96rem;color:var(--cyan-bright)}
+.tarh .row:hover .go .ar{transform:translateX(3px)}
+
+.tarh .faq{max-width:940px;border-top:1px solid var(--rule)}
+.tarh .faq details{border-bottom:1px solid var(--rule)}
+.tarh .faq summary{cursor:pointer;list-style:none;padding:1.6rem 3rem 1.6rem 0;position:relative;
+ font-family:"Plus Jakarta Sans",sans-serif;font-weight:700;font-size:clamp(1.05rem,1rem + .3vw,1.22rem);
+ color:var(--head);line-height:1.35}
+.tarh .faq summary::-webkit-details-marker{display:none}
+.tarh .faq summary::after{content:"";position:absolute;right:.4rem;top:1.7rem;width:30px;height:30px;border-radius:50%;
+ background:rgba(60,192,240,.16)}
+.tarh .faq summary::before{content:"";position:absolute;right:1.24rem;top:2.35rem;width:10px;height:10px;z-index:2;
+ border-right:2.5px solid var(--cyan);border-bottom:2.5px solid var(--cyan);transform:rotate(45deg) translateY(-3px);
+ transition:transform .22s var(--ease)}
+.tarh .faq details[open] summary::before{transform:rotate(-135deg) translateY(-3px)}
+.tarh .faq .ans{padding:0 0 1.7rem;max-width:78ch}
+.tarh .faq .ans a{font-weight:600;border-bottom:2px solid var(--electric)}
+
+.tarh .final{background:radial-gradient(120% 100% at 50% 0%,#12213A 0%,#0A1628 66%);text-align:center;position:relative;
+ overflow:hidden;padding:clamp(5rem,12vw,185px) 0}
+.tarh .final::before{content:"";position:absolute;inset:0;background:radial-gradient(800px 470px at 50% 0%,rgba(0,161,211,.26),transparent 66%)}
+.tarh .final .wrap{position:relative;z-index:2}
+.tarh .final h2{color:var(--head-dark);font-size:clamp(2.1rem,1.4rem + 2.5vw,3.2rem);max-width:20ch;margin-inline:auto}
+.tarh .final p{color:var(--body-dark);max-width:56ch;margin:1.4rem auto 0;font-size:1.1rem}
+.tarh .final .btn{margin-top:2.6rem}
+@media(prefers-reduced-motion:reduce){.tarh *{transition:none!important;animation:none!important}}
+
+</style>
+
+<div class="tarh">
+
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Tools And Guides · For Life Insurance &amp; Annuity Advisors</p>
+    <h1>Every Tool And Guide We Have. <em>In One Place.</em></h1>
+    <p class="hero-sub">Trained Advisor builds client acquisition systems for life insurance and annuity advisors. The tools, the trainings and the book are free. The eleven-guide Library is $27, and everything here takes minutes rather than months.</p>
+    <div class="qa">
+      <p class="lab">The Short Version</p>
+      <div><p>If you want your LinkedIn profile graded, use the <a href="/linkedin-profile-analyzer">free LinkedIn Profile Analyzer</a>. It scores your profile out of 100, grades each section against your ideal client, and writes the rewrites for you in under two minutes.</p><p>If you want the full method, get the book <a href="/free-book-predictable-prospecting">Predictable Prospecting</a> free. If you want one specific problem solved today, the Library below covers eleven of them in the order they actually get solved.</p></div>
+    </div>
+    <nav class="jump" aria-label="Jump to a section">
+      <a href="#start">Where to Start</a><a href="#tools">Tools</a>
+      <a href="#guides">The Library</a><a href="#faq">Which One Do I Need?</a>
+    </nav>
+  </div>
+</section>
+
+<section class="block" id="start">
+  <div class="wrap">
+    <div class="shead">
+      <p class="eyebrow">Start Here</p>
+      <h2>Pick The Sentence <em>That Sounds Like You.</em></h2>
+      <p>Three ways in. Each one takes you to a single next thing, not a reading list.</p>
+    </div>
+    <div class="chooser">
+      <p class="chooser-lab">Which One Is You?</p>
+      <a class="route" href="/linkedin-profile-analyzer">
+        <span class="n">01</span>
+        <span class="route-txt">
+          <span class="said">&ldquo;I don't know where I stand.&rdquo;</span>
+          <span class="then">Get graded first. Two minutes, and you stop guessing which part is broken.</span>
+        </span>
+        <span class="go">Run the Analyzer <span class="ar">&rarr;</span></span>
+      </a>
+      <a class="route" href="#stage-3">
+        <span class="n">02</span>
+        <span class="route-txt">
+          <span class="said">&ldquo;People see me. Nobody replies.&rdquo;</span>
+          <span class="then">Visibility is not your problem. The conversation is.</span>
+        </span>
+        <span class="go">Go to Stage 3 <span class="ar">&rarr;</span></span>
+      </a>
+      <a class="route" href="/free-book-predictable-prospecting">
+        <span class="n">03</span>
+        <span class="route-txt">
+          <span class="said">&ldquo;Just give me the whole thing.&rdquo;</span>
+          <span class="then">155 pages, free, the entire method start to finish.</span>
+        </span>
+        <span class="go">Get the Book <span class="ar">&rarr;</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="block toolband" id="tools">
+  <div class="wrap">
+    <div class="shead">
+      <p class="eyebrow">The Two Big Ones</p>
+      <h2>One Tells You What's Broken. <em>The Other Fixes All Of It.</em></h2>
+    </div>
+    <div class="tools">
+      <article class="tool">
+        <div class="tool-visual"><div class="score" role="img" aria-label="Example profile score of 62 out of 100">
+  <div class="score-top"><div class="score-num">62<span>/100</span></div><div class="score-lab">Profile Score</div></div>
+  <div class="score-row"><b>Headline</b><span class="bar"><i style="width:48%"></i></span></div>
+  <div class="score-row"><b>About</b><span class="bar"><i style="width:71%"></i></span></div>
+  <div class="score-row"><b>Experience</b><span class="bar"><i style="width:59%"></i></span></div>
+  <div class="score-row"><b>Skills</b><span class="bar"><i style="width:83%"></i></span></div>
+  <div class="score-row"><b>Activity</b><span class="bar"><i style="width:34%"></i></span></div>
+</div></div>
+        <div class="tool-body">
+          <span class="tag">Free Tool · 2 Minutes</span>
+          <h3>The LinkedIn Profile Analyzer</h3>
+          <p>Paste your LinkedIn URL, describe the client you want, and get a graded report on whether your profile actually speaks to that person.</p>
+          <ul class="tool-list">
+            <li>An overall score out of 100</li>
+            <li>Section-by-section grades for your headline, about, experience, skills, activity and cover photo</li>
+            <li>Ready-to-use rewrites for every section</li>
+            <li>A priority action plan ranked by impact</li>
+          </ul>
+          <div class="tool-foot">
+            <a class="btn btn-primary" href="/linkedin-profile-analyzer">Run the Analyzer <span class="ar">&rarr;</span></a>
+            <p class="tool-note">Free. No credit card. Results go to your email.</p>
+          </div>
+        </div>
+      </article>
+      <article class="tool">
+        <div class="tool-visual"><div class="bookshot"><span class="badge">New Release</span>
+  <img loading="lazy" decoding="async" src="https://trainedadvisor.com/wp-content/uploads/2026/07/predictable-prospecting-book-cover-loebach-bailey.webp" alt="Cover of Predictable Prospecting by Joe Loebach and Tyson Bailey, showing chat bubbles flowing through a funnel into a booked calendar."></div></div>
+        <div class="tool-body">
+          <span class="tag">Free Book · 155 Pages</span>
+          <h3>Predictable Prospecting</h3>
+          <p>The whole method in one book: how advisors turn prospecting from something they hope works into a number they can count on.</p>
+          <ul class="tool-list">
+            <li>Know your numbers, so activity becomes forecast</li>
+            <li>Why most of your calls come from follow-up</li>
+            <li>A daily routine that survives a busy week</li>
+            <li>Handling objections without flinching</li>
+          </ul>
+          <div class="tool-foot">
+            <a class="btn btn-primary" href="/free-book-predictable-prospecting">Get the Book Free <span class="ar">&rarr;</span></a>
+            <p class="tool-note">Reader's Edition, delivered to your inbox as a PDF.</p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="guides">
+  <div class="wrap">
+    <div class="shead">
+      <p class="eyebrow">The Trained Advisor Library</p>
+      <h2>Eleven Guides, <em>One Sequence, One Price.</em></h2>
+      <p>Most advisors collect guides and read them out of order, which is why the advice never compounds. These are numbered: profile, then content, then engagement, then prospecting, then offers, then objections, then proof. Two of the thirteen stay free and are marked below.</p>
+    </div>
+    <div class="tool" style="margin-bottom:clamp(3.4rem,5.5vw,5rem)">
+      <div class="tool-body">
+        <span class="tag">Eleven Guides · 143 Pages</span>
+        <h3>The Trained Advisor Library</h3>
+        <p>The eleven guides marked below, in the order a pipeline actually gets built, downloaded the moment you pay. One price, no subscription, yours to keep.</p>
+        <div class="tool-foot">
+          <a class="btn" href="/library">Get The Library — $27 <span class="ar">&rarr;</span></a>
+          <p class="tool-note">Instant download. 143 pages, about nineteen cents each.</p>
+        </div>
+      </div>
+    </div>
+    <div class="stage" id="stage-1">
+      <div class="stage-head">
+        <div><p class="stage-n">Stage 01</p><h3>Get Found On LinkedIn</h3></div>
+        <p>Before anyone books a call with you, they look you up. These four cover what they find: your profile, your search visibility, and whether you show up often enough to be remembered.</p>
+      </div>
+    <div class="cards">
+      <a class="card" href="/library">
+        <div class="card-cover"><img src="https://trainedadvisor.com/wp-content/uploads/2026/07/linkedin-growth-playbook-for-financial-advisors.webp" alt="Cover of The Polished LinkedIn Growth Playbook, a Trained Advisor guide mapping the full LinkedIn funnel for financial advisors." loading="lazy"></div>
+        <div class="card-body">
+          <p class="card-meta">Start Here · 10 Pages</p>
+          <h4>The Polished LinkedIn Growth Playbook</h4>
+          <p>The whole funnel in one map: profile, outreach, content, data and automation, and the order to do them in.</p>
+          <span class="card-cta">In The Library <span class="ar">&rarr;</span></span>
+        </div>
+      </a>
+      <a class="card" href="/library">
+        <div class="card-cover"><img src="https://trainedadvisor.com/wp-content/uploads/2026/07/linkedin-profile-update-guide-for-financial-advisors.webp" alt="Cover of The LinkedIn Profile Update Guide, a Trained Advisor guide to rewriting every section of an advisor's LinkedIn profile." loading="lazy"></div>
+        <div class="card-body">
+          <p class="card-meta">Profile · 12 Pages</p>
+          <h4>The LinkedIn Profile Update Guide</h4>
+          <p>Rewrite every section so the right people are drawn to you instead of scrolling past.</p>
+          <span class="card-cta">In The Library <span class="ar">&rarr;</span></span>
+        </div>
+      </a>
+      <a class="card" href="/resources/get-found-fast-guide">
+        <div class="card-cover"><img src="https://trainedadvisor.com/wp-content/uploads/2026/07/get-found-fast-local-seo-guide-for-advisors.webp" alt="Cover of The Get Found Fast Guide, a free Trained Advisor guide to local SEO, listings and reviews for financial advisors." loading="lazy"></div>
+        <div class="card-body"><span class="tag">Free</span>
+          <p class="card-meta">Visibility · 15 Pages</p>
+          <h4>The Get Found Fast Guide</h4>
+          <p>Local SEO, listings and reviews, so you turn up for the people already searching for an advisor.</p>
+          <span class="card-cta">Get The Guide <span class="ar">&rarr;</span></span>
+        </div>
+      </a>
+      <a class="card" href="/library">
+        <div class="card-cover"><img src="https://trainedadvisor.com/wp-content/uploads/2026/07/linkedin-engagement-flywheel-guide-for-advisors.webp" alt="Cover of The LinkedIn Engagement Flywheel, a Trained Advisor guide to a twenty-minute-a-day LinkedIn commenting system." loading="lazy"></div>
+        <div class="card-body">
+          <p class="card-meta">Visibility · 15 Pages</p>
+          <h4>The LinkedIn Engagement Flywheel</h4>
+          <p>A twenty-minute-a-day commenting system that compounds attention without writing more posts.</p>
+          <span class="card-cta">In The Library <span class="ar">&rarr;</span></span>
+        </div>
+      </a>
+    </div>
+    </div>
+    <div class="stage" id="stage-2">
+      <div class="stage-head">
+        <div><p class="stage-n">Stage 02</p><h3>Create Content That Attracts</h3></div>
+        <p>The hardest part of posting is not the writing, it is deciding what to write. These three remove the blank page: a system for generating ideas, a prompt library, and thirty posts already planned.</p>
+      </div>
+    <div class="cards n3">
+      <a class="card" href="/library">
+        <div class="card-cover"><img src="https://trainedadvisor.com/wp-content/uploads/2026/07/content-creation-playbook-for-financial-advisors.webp" alt="Cover of The Content Creation Playbook, a Trained Advisor guide to generating LinkedIn content ideas for advisors." loading="lazy"></div>
+        <div class="card-body">
+          <p class="card-meta">Content · 9 Pages</p>
+          <h4>The Content Creation Playbook</h4>
+          <p>A beginner's system for never running out of things to say to your market.</p>
+          <span class="card-cta">In The Library <span class="ar">&rarr;</span></span>
+        </div>
+      </a>
+      <a class="card" href="/library">
+        <div class="card-cover"><img src="https://trainedadvisor.com/wp-content/uploads/2026/07/ai-prompt-guide-for-financial-advisors.webp" alt="Cover of The AI Prompt Guide, a free Trained Advisor library of copy-paste AI prompts for advisor content and prospecting." loading="lazy"></div>
+        <div class="card-body">
+          <p class="card-meta">Content · 26 Pages</p>
+          <h4>The AI Prompt Guide</h4>
+          <p>A copy-paste library of AI prompts built for advisor content and prospecting, not generic marketing.</p>
+          <span class="card-cta">In The Library <span class="ar">&rarr;</span></span>
+        </div>
+      </a>
+      <a class="card" href="/library">
+        <div class="card-cover"><img src="https://trainedadvisor.com/wp-content/uploads/2026/07/30-day-linkedin-content-plan-for-advisors.webp" alt="Cover of The 30-Day LinkedIn Content Plan, a Trained Advisor guide with thirty ready-to-use LinkedIn post prompts." loading="lazy"></div>
+        <div class="card-body">
+          <p class="card-meta">Content · 9 Pages</p>
+          <h4>The 30-Day LinkedIn Content Plan</h4>
+          <p>Thirty ready-to-use post prompts across four themed weeks. Open it and post today.</p>
+          <span class="card-cta">In The Library <span class="ar">&rarr;</span></span>
+        </div>
+      </a>
+    </div>
+    </div>
+    <div class="stage" id="stage-3">
+      <div class="stage-head">
+        <div><p class="stage-n">Stage 03</p><h3>Start Conversations That Convert</h3></div>
+        <p>Visibility is worthless if the conversation stalls. These two cover the messages that open a dialogue and the answers that keep it alive when someone pushes back.</p>
+      </div>
+    <div class="cards n2">
+      <a class="card" href="/library">
+        <div class="card-cover"><img src="https://trainedadvisor.com/wp-content/uploads/2026/07/modern-prospecting-playbook-for-financial-advisors.webp" alt="Cover of The Modern Prospecting Playbook, a Trained Advisor guide to LinkedIn scripts, follow-up cadence and closes." loading="lazy"></div>
+        <div class="card-body">
+          <p class="card-meta">Prospecting · 12 Pages</p>
+          <h4>The Modern Prospecting Playbook</h4>
+          <p>Principles, scripts, follow-up cadence and closes that actually book calls.</p>
+          <span class="card-cta">In The Library <span class="ar">&rarr;</span></span>
+        </div>
+      </a>
+      <a class="card" href="/library">
+        <div class="card-cover"><img src="https://trainedadvisor.com/wp-content/uploads/2026/07/objection-handling-guide-for-insurance-advisors.webp" alt="Cover of The Objection Handling Guide, a Trained Advisor guide to answering prospect objections without losing the conversation." loading="lazy"></div>
+        <div class="card-body">
+          <p class="card-meta">Prospecting · 12 Pages</p>
+          <h4>The Objection Handling Guide</h4>
+          <p>Stay calm and turn a concern into a conversation instead of the end of one.</p>
+          <span class="card-cta">In The Library <span class="ar">&rarr;</span></span>
+        </div>
+      </a>
+    </div>
+    </div>
+    <div class="stage" id="stage-4">
+      <div class="stage-head">
+        <div><p class="stage-n">Stage 04</p><h3>Build An Offer And Prove It</h3></div>
+        <p>Most advisors sell a meeting, which is exactly why the meeting is hard to get. These four sharpen what you are actually offering, then turn the clients you already made happy into proof.</p>
+      </div>
+    <div class="cards">
+      <a class="card" href="/library">
+        <div class="card-cover"><img src="https://trainedadvisor.com/wp-content/uploads/2026/07/making-offers-on-linkedin-offer-method-ebook.webp" alt="Cover of Making Offers on LinkedIn, a free Trained Advisor ebook teaching the OFFER Method to financial advisors." loading="lazy"></div>
+        <div class="card-body">
+          <p class="card-meta">Offers · 26 Pages</p>
+          <h4>Making Offers On LinkedIn</h4>
+          <p>The OFFER Method ebook. Build an offer a stranger can understand and cannot ignore.</p>
+          <span class="card-cta">In The Library <span class="ar">&rarr;</span></span>
+        </div>
+      </a>
+      <a class="card" href="/library">
+        <div class="card-cover"><img src="https://trainedadvisor.com/wp-content/uploads/2026/07/linkedin-offer-scorecard-for-financial-advisors.webp" alt="Cover of The LinkedIn Offer Scorecard, a free Trained Advisor twelve-question assessment of how strong an advisor's offer is." loading="lazy"></div>
+        <div class="card-body">
+          <p class="card-meta">Offers · 6 Pages</p>
+          <h4>The LinkedIn Offer Scorecard</h4>
+          <p>A twelve-question check on how strong your offer really is, scored honestly.</p>
+          <span class="card-cta">In The Library <span class="ar">&rarr;</span></span>
+        </div>
+      </a>
+      <a class="card" href="/resources/3-linkedin-headlines">
+        <div class="card-cover"><img src="https://trainedadvisor.com/wp-content/uploads/2026/07/3-linkedin-headlines-that-attract-clients.webp" alt="Cover of 3 LinkedIn Headlines That Attract Clients, a free Trained Advisor guide with three plug-and-play headline structures." loading="lazy"></div>
+        <div class="card-body"><span class="tag">Free</span>
+          <p class="card-meta">Offers · 5 Pages</p>
+          <h4>3 LinkedIn Headlines That Attract Clients</h4>
+          <p>Three plug-and-play headline structures that stop the scroll and name who you help.</p>
+          <span class="card-cta">Get The Guide <span class="ar">&rarr;</span></span>
+        </div>
+      </a>
+      <a class="card" href="/library">
+        <div class="card-cover"><img src="https://trainedadvisor.com/wp-content/uploads/2026/07/5-client-testimonial-questions-for-advisors.webp" alt="Cover of 5 Questions to Ask Your Happy Clients, a Trained Advisor guide to collecting testimonials that convert." loading="lazy"></div>
+        <div class="card-body">
+          <p class="card-meta">Proof · 6 Pages</p>
+          <h4>5 Questions To Ask Your Happy Clients</h4>
+          <p>The five questions that turn a satisfied client into a testimonial that converts.</p>
+          <span class="card-cta">In The Library <span class="ar">&rarr;</span></span>
+        </div>
+      </a>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section class="block moreband">
+  <div class="wrap">
+    <div class="shead">
+      <p class="eyebrow">Also Free</p>
+      <h2>Three More Things <em>Worth Your Time.</em></h2>
+    </div>
+    <div class="rows">
+      <a class="row" href="/free-training-library">
+        <h3>The Free Training Library</h3>
+        <p>Twenty-five recorded trainings, nine to thirty-four minutes each, covering LinkedIn lead generation, premium finance, buy-sell agreements, funnels and niche selection. No opt-in required.</p>
+        <span class="go">Watch <span class="ar">&rarr;</span></span>
+      </a>
+      <a class="row" href="/advisor-insight-newsletter">
+        <h3>The Advisor Insight Newsletter</h3>
+        <p>What is actually working in advisor marketing right now, written for people who do this for a living rather than read about it.</p>
+        <span class="go">Subscribe <span class="ar">&rarr;</span></span>
+      </a>
+      <a class="row" href="/compare">
+        <h3>The CRM Comparison</h3>
+        <p>How Advisor Nexus stacks up against Redtail, Wealthbox, HubSpot, ClickFunnels, Salesforce FSC and eight more, with the real monthly cost of each stack.</p>
+        <span class="go">Compare <span class="ar">&rarr;</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="faq">
+  <div class="wrap">
+    <div class="shead">
+      <p class="eyebrow">Straight Answers</p>
+      <h2>Which Resource <em>Do I Actually Need?</em></h2>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>Is there a free LinkedIn profile analyzer for financial advisors?</summary>
+        <div class="ans"><p>Yes. Trained Advisor's <a href="/linkedin-profile-analyzer">LinkedIn Profile Analyzer</a> is free and built specifically for life insurance and annuity advisors. You paste your profile URL and describe your ideal client, and it returns a score out of 100, section-by-section grades for your headline, about, experience, skills, activity and cover photo, ready-to-use rewrites, and a priority action plan. It takes under two minutes and does not require a credit card.</p></div>
+      </details>
+      <details>
+        <summary>What should I use first if I am starting from scratch?</summary>
+        <div class="ans"><p>Run the Profile Analyzer. It is free, it takes two minutes, and it tells you what is broken right now. The order to fix things in is The Polished LinkedIn Growth Playbook, which opens the Library.</p></div>
+      </details>
+      <details>
+        <summary>Are these resources really free, and what is the catch?</summary>
+        <div class="ans"><p>Most of it is free. The Profile Analyzer, the training library, the newsletter, the CRM comparison, the 155-page book and two of the guides cost nothing, and the ones delivered by email ask for an address rather than a card. The eleven guides in the Library are $27 together, paid once. Nothing here is a trial that starts billing.</p></div>
+      </details>
+      <details>
+        <summary>Who are these written for?</summary>
+        <div class="ans"><p>Life insurance and annuity advisors, and financial advisors who want a repeatable way to find clients instead of waiting on referrals. The examples, the scripts and the objections are all drawn from that market rather than adapted from generic B2B marketing advice.</p></div>
+      </details>
+      <details>
+        <summary>I already post on LinkedIn and nothing happens. Which one helps?</summary>
+        <div class="ans"><p>Usually it is the profile. Traffic to a profile that does not name who you help converts badly no matter how good the post was, so start with the Profile Analyzer. If your profile scores well, the offer is the next suspect, and that is what Making Offers On LinkedIn and The LinkedIn Offer Scorecard cover inside the Library.</p></div>
+      </details>
+      <details>
+        <summary>What is Trained Advisor?</summary>
+        <div class="ans"><p>Trained Advisor runs done-for-you client acquisition on LinkedIn for life insurance and annuity advisors, and builds Advisor Nexus, the CRM and marketing platform those advisors run their practice on. Everything on this page works whether or not you ever become a client.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2>Rather Skip The Reading?</h2>
+    <p>Book a call and we will tell you which of these actually applies to your practice, and what we would do first if it were ours.</p>
+    <a class="btn" href="/book-a-meeting">Book a Strategy Call <span class="ar">&rarr;</span></a>
+  </div>
+</section>
+
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": "https://trainedadvisor.com/resources#page",
+      "url": "https://trainedadvisor.com/resources",
+      "name": "Tools And Guides For Financial Advisors",
+      "description": "Trained Advisor's tools and guides in one place: a free LinkedIn Profile Analyzer for financial advisors, the Predictable Prospecting book, a 25-video training library, two free guides, and the eleven-guide Trained Advisor Library at $27.",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Trained Advisor",
+        "url": "https://trainedadvisor.com"
+      },
+      "about": {
+        "@type": "Thing",
+        "name": "LinkedIn marketing for life insurance and annuity advisors"
+      }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://trainedadvisor.com/linkedin-profile-analyzer#app",
+      "name": "LinkedIn Profile Analyzer for Financial Advisors",
+      "url": "https://trainedadvisor.com/linkedin-profile-analyzer",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web browser",
+      "description": "A free tool that scores a financial advisor's LinkedIn profile out of 100, grades each section against their ideal client, and returns ready-to-use rewrites and a priority action plan in under two minutes.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "provider": {
+        "@type": "Organization",
+        "name": "Trained Advisor",
+        "url": "https://trainedadvisor.com"
+      }
+    },
+    {
+      "@type": "Book",
+      "@id": "https://trainedadvisor.com/free-book-predictable-prospecting#book",
+      "name": "Predictable Prospecting",
+      "url": "https://trainedadvisor.com/free-book-predictable-prospecting",
+      "numberOfPages": 155,
+      "inLanguage": "en",
+      "description": "How life insurance and annuity advisors turn prospecting from an unpredictable effort into a forecastable number.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Trained Advisor"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://trainedadvisor.com/resources#list",
+      "name": "Trained Advisor Tools And Guides",
+      "numberOfItems": 5,
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "LinkedIn Profile Analyzer",
+          "url": "https://trainedadvisor.com/linkedin-profile-analyzer"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Predictable Prospecting (Free Book)",
+          "url": "https://trainedadvisor.com/free-book-predictable-prospecting"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "The Trained Advisor Library",
+          "url": "https://trainedadvisor.com/library"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "The Get Found Fast Guide",
+          "url": "https://trainedadvisor.com/resources/get-found-fast-guide"
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "name": "3 LinkedIn Headlines That Attract Clients",
+          "url": "https://trainedadvisor.com/resources/3-linkedin-headlines"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://trainedadvisor.com/resources#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is there a free LinkedIn profile analyzer for financial advisors?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Trained Advisor's LinkedIn Profile Analyzer is free and built specifically for life insurance and annuity advisors. You paste your profile URL and describe your ideal client, and it returns a score out of 100, section-by-section grades for your headline, about, experience, skills, activity and cover photo, ready-to-use rewrites, and a priority action plan. It takes under two minutes and does not require a credit card."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What should I use first if I am starting from scratch?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Run the Profile Analyzer. It is free, it takes two minutes, and it tells you what is broken right now. The order to fix things in is The Polished LinkedIn Growth Playbook, which opens the Library."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are these resources really free, and what is the catch?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most of it is free. The Profile Analyzer, the training library, the newsletter, the CRM comparison, the 155-page book and two of the guides cost nothing, and the ones delivered by email ask for an address rather than a card. The eleven guides in the Library are $27 together, paid once. Nothing here is a trial that starts billing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Who are these written for?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Life insurance and annuity advisors, and financial advisors who want a repeatable way to find clients instead of waiting on referrals. The examples, scripts and objections are drawn from that market rather than adapted from generic B2B marketing advice."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "I already post on LinkedIn and nothing happens. Which one helps?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Usually it is the profile. Traffic to a profile that does not name who you help converts badly no matter how good the post was, so start with the Profile Analyzer. If your profile scores well, the offer is the next suspect, and that is what Making Offers On LinkedIn and The LinkedIn Offer Scorecard cover inside the Library."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is Trained Advisor?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Trained Advisor runs done-for-you client acquisition on LinkedIn for life insurance and annuity advisors, and builds Advisor Nexus, the CRM and marketing platform those advisors run their practice on. Everything on this page works whether or not you ever become a client."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "Product",
+      "@id": "https://trainedadvisor.com/library#product",
+      "name": "The Trained Advisor Library",
+      "url": "https://trainedadvisor.com/library",
+      "description": "Eleven LinkedIn guides for life insurance and annuity advisors, 143 pages, sequenced from profile through content, engagement, prospecting, offers, objections and proof.",
+      "brand": {
+        "@type": "Organization",
+        "name": "Trained Advisor"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "27",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "url": "https://trainedadvisor.com/library"
+      }
+    }
+  ]
+}
+</script>

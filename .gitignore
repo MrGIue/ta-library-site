@@ -1,5 +1,9 @@
-node_modules/
-test/shots/
-.DS_Store
 *.log
+*.pyc
+.DS_Store
 .vercel/
+__pycache__/
+node_modules/
+resources_page/elementor-5801-2*.json
+resources_page/preview-*.html
+test/shots/
