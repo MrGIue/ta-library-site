@@ -1,38 +1,63 @@
-# TA Library Site — The $27 Bundle, Rebuilt To Beat The Current Page
+# TA Library Site — The $27 Pay Page
 
 ## Purpose
-A standalone, futuristic, motion-driven marketing site whose single call to action is the
-$27 **Trained Advisor Library** (11 LinkedIn guides sold as one sequence). It replaces
-`ta-guide-bundle.vercel.app` as the surface Joe shows people. Audience: life insurance and
-annuity advisors.
+The sales page for the **$27 Trained Advisor Library** (11 LinkedIn guides sold as one sequence).
+This is TA's first self-serve pay page: someone buys without Joe involved. Audience is life insurance
+and annuity advisors. It is pasted into trainedadvisor.com as one self-contained block.
 
 ## Status
-active — 2026-09-07
+active — 2026-09-07. Joe approved the current build: *"okay this is fucking GREAT."*
+
+**Live:** https://claude.ai/code/artifact/1c27dada-0ee4-449f-b536-9ad891b08856
+**Repo:** `MrGIue/ta-library-site` (public), branch `master`.
 
 ## Key Files
-- `concepts/` — three rendered visual directions + an always-visible switcher (the pick gate)
-- `site/` — the built site (only after Joe picks a direction)
-- `test/` — render, contrast, grid and mobile-viewport checks
+- `build.py` — the generator and EVERY constant. Change it and re-run.
+- `site/_template.html` — the source. `site/_comet.js` — the graphic, spliced in at an anchor comment.
+- `site/index.html` — **GENERATED. Never hand-edit** (a hand fix is reverted by the next build).
+- `site/covers/` — the 11 covers, downscaled to 460px JPEG and embedded as data URIs.
+- `test/shot.mjs` — render + horizontal overflow at 320/390/1024/1440.
+- `test/audit.mjs` — contrast against the real painted ancestor, plus a geometry-based grid check.
+- `test/imgs.mjs` — scrolls the page so lazy images load before capture.
+- `test/clip.mjs` — screenshots one selector; takes a settle argument in ms.
+- `concepts/` — the three rendered directions Joe picked from. History; not the deliverable.
 
 ## Decisions & Context
-- **Fork A + E** (sell asset on a TA-branded surface): full design pipeline AND Brand Bible tokens.
-- **Tokens pasted verbatim** from `Projects/fable-7-day-sprint/brand-bible/BRAND-BIBLE.md` §7.
-  Dark by law. Fonts locked to Plus Jakarta Sans + DM Sans, so the three directions differ on
-  substrate, layout axis and type TREATMENT, never on family or palette.
-- `ui-ux-pro-max` returned "Organic Biophilic / IBM Plex Sans" for this brief. Rejected — an
-  approved in-house system outranks the generator. Took its pre-delivery checklist only.
-- Joe's four standing lead-magnet-page rules apply EXCEPT "no dark heroes", which was scoped to
-  trainedadvisor.com because the WordPress header and footer are dark. This is standalone, so the
-  dark hero is available — and it is the only surface where electric `#44C7F4` measures 9.31:1.
+- **Fork A + E** (sell asset on a TA surface): full design pipeline AND Brand Bible tokens.
+- **NO header, footer or logo.** Joe: *"this cant have a header bc itd be on our website."* The
+  Elementor header (70px) and footer (428px) already wrap it. Container 1240px, sections 140px,
+  everything scoped under `.ta-lib` so nothing leaks into the page builder.
+- **LIGHT ground, overriding the Brand Bible's dark-by-law rule**, on Joe's instruction. Measured
+  consequence: no cyan clears 3:1 on light (CTA `#00A1D3` is 2.88:1), so **cyan carries SHAPES only and
+  all text is navy**. Headline emphasis is italic plus an electric underline.
+- **White on the `#00A1D3` CTA measures 2.98:1 and STAYS.** Joe ruled on that number on 2026-09-01 and
+  caught a previous attempt to dull the fill. Do not re-raise it, do not "fix" it.
+- **The graphic is an ASSEMBLY, not a collection.** Eleven arc segments float apart; a comet seats each
+  in order until the ring closes and reads *One Complete System*. Joe rejected the collecting metaphor
+  himself. The earlier rocket is retired — do not re-propose it.
+- **The comet needs a DARK viewport** inside the light page. A coma and a tail are additive light and do
+  not exist on white.
+- Every number on the page is counted: 11 PDFs, **143 pages**, ~19¢ a page. Every proof quote is verbatim
+  from `trainedadvisor.com/testimonials`, re-verified 2026-09-07.
 
 ## Known Gotchas
-- **Vercel refuses every deploy on `team_2MUsZZ5m8D4xst2FfKm2UjXg`.** Re-confirmed 2026-09-07:
-  `dpl_5QtmEyG9SnuYTG3PYXtDj6koD1Eb` → `BLOCKED`. Team plan reads `hobby`. Four days, no self-clear,
-  git-push deploys blocked too. → vault `08 Learned Patterns/Vercel - Deployments return BLOCKED...`
-- **Hosting therefore runs on GitHub Pages** until Vercel is fixed. Pages needs a PUBLIC repo on a
-  free account; the repo holds no credentials.
-- `trainedadvisor.com/pay/guide-bundle` is still a 404 — nothing sells until Joe makes one Stripe
-  product at $27.
+- **The render loop must NEVER be gated on `prefers-reduced-motion`.** Windows "Animation effects: off"
+  reports `reduce` — that is Joe's own machine — and it froze an earlier build on one frame. Headless
+  Chrome also reports `reduce` BY DEFAULT, so `test/shot.mjs` forces `no-preference`.
+- **The first rAF timestamp can precede the seeded `performance.now()`**, so `dt` arrives negative.
+  Clamp both ends and derive any wrap-around index with a double modulo.
+- **A `<canvas>` is a replaced element:** `position:absolute; inset:0` leaves it at 300x150 and its
+  width attribute then overflows the viewport. Set `width:100%; height:100%`.
+- **The cdnjs path is `three.js/r128/`, not `three/r128/`.** The wrong one 404s silently.
+- **`puppeteer-core` 25.x entry is `lib/puppeteer/puppeteer-core.js`.**
+- **Judge a particle emitter only after one full particle lifetime.** A capture at 1.5s shows no tail.
+- **Vercel refuses every deploy on `team_2MUsZZ5m8D4xst2FfKm2UjXg`** (`BLOCKED`, four days, plan reads
+  `hobby`), and the `gh` token has no Pages scope. Hosting is the artifact URL until Joe fixes one.
 
 ## Next Steps
-- Joe picks one of the three directions, then build it out.
+1. **Joe rules on the `GUARANTEE` constant** — a 30-day refund line is live on the page. Keep or kill.
+2. **Joe creates ONE Stripe product at $27** and points `trainedadvisor.com/pay/guide-bundle` at it.
+   It is a 404 today, so nothing sells.
+3. Wire analytics. A conversion page that cannot be measured cannot be optimised.
+4. The remaining items from the original brief: privacy, terms, sitemap, robots, custom 404, form
+   validation, spam protection.

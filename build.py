@@ -12,14 +12,22 @@ TEMPLATE = ROOT / "site" / "_template.html"
 OUT = ROOT / "site" / "index.html"
 
 PRICE = "$27"
-CHECKOUT = "https://trainedadvisor.com/pay/guide-bundle"   # 404 until Joe makes the Stripe product
+# LIVE Stripe payment link, created 2026-09-07 on Trained Advisor Primary
+# (acct_1B4bLYKuIVbq8ZJv, plink_1UD97CKuIVbq8ZJvQd1ZVgmw). $27 one-off, active.
+# It redirects on success to the delivery page with the session id attached.
+# The branded /pay/guide-bundle URL from the offer ladder is a nice-to-have
+# redirect, not a dependency — this link works on its own.
+CHECKOUT = "https://buy.stripe.com/00w5kE4Fw1P1gBS6ad3Nm2V"
 CALL_URL = "https://trainedadvisor.com/book-a-call"
 PROOF_URL = "https://trainedadvisor.com/testimonials"
 
-# The free stage-one door, live and already capturing email (verified 200, 2026-09-07).
-# It exists so the ~97% who do not buy today still leave an address, which was the
-# ratified 2026-09-04 decision and had been dropped in the rebuild.
-FREE_URL = "https://trainedadvisor.com/resources/linkedin-profile-update"
+# The free fallback door, so the ~97% who do not buy today still leave an address.
+# It MUST point at a guide that is OUTSIDE the eleven. The 2026-09-04 decision names
+# Get Found Fast and 3 LinkedIn Headlines as the two magnets that stay free; every
+# other guide on /resources is inside the $27 Library. A previous build pointed this
+# at /resources/linkedin-profile-update, which IS one of the eleven — the page was
+# selling a bundle and giving away its own stage one on the same screen.
+FREE_URL = "https://trainedadvisor.com/resources/get-found-fast-guide"
 
 # Counted from the eleven shipped PDFs on 2026-09-07, not estimated.
 PAGES = 143

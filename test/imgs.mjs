@@ -12,7 +12,8 @@ await p.evaluate(async()=>{ const H=document.body.scrollHeight;
   window.scrollTo(0,0); });
 await new Promise(r=>setTimeout(r,1500));
 console.log(JSON.stringify(await p.evaluate(()=>{
-  const im=[...document.querySelectorAll('.ta-lib .gcard img')];
+  // .gcard is the pay page, .dcard the delivery page — one harness serves both
+  const im=[...document.querySelectorAll('.ta-lib .gcard img, .ta-lib .dcard img')];
   return { count: im.length,
     loaded: im.filter(i=>i.complete && i.naturalWidth>0).length,
     natural: im.slice(0,3).map(i=>i.naturalWidth+'x'+i.naturalHeight),
