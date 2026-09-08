@@ -82,7 +82,7 @@
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(32, 1, 0.1, 120);
   // Tighter FOV and a shorter throw than v1, so the ring fills more of the frame.
-  var TILT = CFG.tilt, CAM_D = CFG.dial ? 19.8 : 18.3;
+  var TILT = CFG.tilt, CAM_D = CFG.dial ? 19.8 : 17.2;
   camera.position.set(0, Math.sin(TILT) * CAM_D, Math.cos(TILT) * CAM_D);
   camera.lookAt(0, 0, 0);
 
@@ -270,7 +270,7 @@
   });
 
   /* ── the nucleus ── */
-  var nucGeo = new THREE.IcosahedronGeometry(0.21, 1);
+  var nucGeo = new THREE.IcosahedronGeometry(0.155, 1);
   var np = nucGeo.attributes.position;
   for (var i = 0; i < np.count; i++) {                       // rough it up so it reads as rock
     var f = 0.74 + Math.random() * 0.5;
@@ -279,13 +279,13 @@
   np.needsUpdate = true; nucGeo.computeVertexNormals();
   var nucleus = new THREE.Mesh(nucGeo, new THREE.MeshBasicMaterial({ color: 0xFFFFFF }));
   nucleus.renderOrder = 12; scene.add(nucleus);
-  var halo = new THREE.Mesh(new THREE.CircleGeometry(0.52, 40), new THREE.ShaderMaterial({
+  var halo = new THREE.Mesh(new THREE.CircleGeometry(0.40, 40), new THREE.ShaderMaterial({
     transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
     uniforms: { uCol: { value: new THREE.Color(0x9FE0FF) } },
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
     fragmentShader: 'varying vec2 vUv; uniform vec3 uCol;' +
       'void main(){ float d = length(vUv - 0.5) * 2.0;' +
-      ' float a = pow(max(0.0, 1.0 - d), 3.0) * 0.40;' +
+      ' float a = pow(max(0.0, 1.0 - d), 3.6) * 0.46;' +
       ' gl_FragColor = vec4(uCol, a); }'
   }));
   halo.rotation.x = -Math.PI / 2; halo.renderOrder = 11; scene.add(halo);
@@ -314,7 +314,7 @@
       var tx = -Math.sin(aa), tz = Math.cos(aa);
       var ox = Math.cos(aa), oz = Math.sin(aa);       // outward from the hub
       var ion = Math.random() < 0.34;
-      var slow = Math.random() < 0.06;                // these stay and form the coma
+      var slow = Math.random() < 0.032;                // these stay and form the coma
       var back = slow ? 0.05 : (ion ? 2.90 : 1.90) * (0.6 + Math.random() * 0.8) * boost;
       var out  = slow ? 0.04 : (ion ? 0.60 : 0.10) * (0.5 + Math.random());
       var jit  = slow ? 0.11 : (ion ? 0.03 : 0.34);
@@ -456,8 +456,8 @@
     var w = host.clientWidth, h = host.clientHeight;
     STAGE_FIRST.forEach(function (gi, si) {
       var a = ang((gi + 0.5) / N);
-      proj.set(Math.cos(a) * R * 1.30, 0, Math.sin(a) * R * 1.30).project(camera);
-      var cw = chips[si].offsetWidth / 2 + 3, ch = chips[si].offsetHeight / 2 + 3;
+      proj.set(Math.cos(a) * R * 1.19, 0, Math.sin(a) * R * 1.19).project(camera);
+      var cw = chips[si].offsetWidth / 2 + 14, ch = chips[si].offsetHeight / 2 + 14;
       chips[si].style.left = Math.max(cw, Math.min(w - cw, (proj.x * .5 + .5) * w)) + 'px';
       chips[si].style.top  = Math.max(ch, Math.min(h - ch, (-proj.y * .5 + .5) * h)) + 'px';
     });
@@ -470,7 +470,14 @@
   (function frame(now) {
     // the first rAF timestamp is the FRAME START and can precede the seeded
     // performance.now(), so dt arrives negative. Clamp both ends.
-    var dt = Math.min(Math.max((now - t0) / 1000, 0), .05); t0 = now;
+    //
+    // window.__ORBIT_FIXED_DT makes the loop advance by a fixed step per frame
+    // instead of by wall clock. A screen recorder can then sample every frame no
+    // matter how slow its encoder is, which is the difference between a smooth
+    // clip and an eight-frame-a-second flipbook. Never set in production.
+    var dt = window.__ORBIT_FIXED_DT ||
+             Math.min(Math.max((now - t0) / 1000, 0), .05);
+    t0 = now;
 
     if (hold > 0) {                    // the finished ring holds, whole, before it resets
       hold -= dt;

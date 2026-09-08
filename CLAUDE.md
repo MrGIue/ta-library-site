@@ -13,7 +13,9 @@ active — 2026-09-07. Joe approved the current build: *"okay this is fucking GR
 
 ## Key Files
 - `build.py` — the generator and EVERY constant. Change it and re-run.
-- `site/_template.html` — the source. `site/_comet.js` — the graphic, spliced in at an anchor comment.
+- `site/_template.html` — the source, with `<!--COMET-->` where the graphic goes.
+- `site/_comet2.js` — the hero graphic. build.py splices it at that anchor, so this file is the
+  only copy. `site/_orbit-lab.html?p=<preset>` renders it standalone for fast iteration.
 - `site/index.html` — **GENERATED. Never hand-edit** (a hand fix is reverted by the next build).
 - `site/covers/` — the 11 covers, downscaled to 460px JPEG and embedded as data URIs.
 - `test/shot.mjs` — render + horizontal overflow at 320/390/1024/1440.
@@ -35,6 +37,12 @@ active — 2026-09-07. Joe approved the current build: *"okay this is fucking GR
 - **The graphic is an ASSEMBLY, not a collection.** Eleven arc segments float apart; a comet seats each
   in order until the ring closes and reads *One Complete System*. Joe rejected the collecting metaphor
   himself. The earlier rocket is retired — do not re-propose it.
+- **Deep Field is the chosen treatment**, picked 2026-09-07 from three rendered directions: Dial
+  (overhead instrument), Deep Field (tilted, cinematic) and Forge (parts land white-hot). All three
+  still build from the one engine; `PRESET` in build.py selects. The metaphor did not change — Joe's
+  note was *"that graphic isnt quite there, the quality and detail needs to be turned up."*
+- **What made v1 read flat**, so it is not repeated: flat ribbons at 12% opacity, no bloom at all,
+  labels floating unconnected, and parts that faded in rather than landing. v2 answers each one.
 - **The comet needs a DARK viewport** inside the light page. A coma and a tail are additive light and do
   not exist on white.
 - Every number on the page is counted: 11 PDFs, **143 pages**, ~19¢ a page. Every proof quote is verbatim
@@ -62,6 +70,13 @@ active — 2026-09-07. Joe approved the current build: *"okay this is fucking GR
 - **`rank_math_robots` is registered in `wp/v2` as a STRING but Rank Math reads an ARRAY.** A string
   write returns 200, stores, and is then ignored at render. There is no REST path to noindex.
 - **Judge a particle emitter only after one full particle lifetime.** A capture at 1.5s shows no tail.
+- **To record the graphic, drive the frame loop; do not sample it.** A screenshot takes ~100ms, during
+  which rAF fires another six times, so a wall-clock capture covers six times the animation it claims
+  and plays back that much too fast. Set `window.__ORBIT_FIXED_DT` for a deterministic step AND replace
+  `requestAnimationFrame` with a queue the driver drains once per frame. Recipe in the scratchpad's
+  `rec3.mjs`; the fixed-dt hook is the only capture support inside the shipped file.
+- **The tone curve must only compress values above 1.0.** A filmic shoulder applied to the whole frame
+  lifted the near-black ground and turned the deep navy to slate.
 - **Vercel refuses every deploy on `team_2MUsZZ5m8D4xst2FfKm2UjXg`** (`BLOCKED`, four days, plan reads
   `hobby`), and the `gh` token has no Pages scope. Hosting is the artifact URL until Joe fixes one.
 
