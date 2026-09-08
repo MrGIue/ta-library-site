@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Orbit Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --head:"Plus Jakarta Sans",system-ui,sans-serif; --accent:#44C7F4; --bg-deep:#0A1628;
+          --ease:cubic-bezier(.22,1,.36,1); }
+  body { margin:0; background:#EDF5FA; display:grid; place-items:center; min-height:100vh; padding:40px; }
+  .orbit { position:relative; width:820px; aspect-ratio:1;
+    border-radius:26px; overflow:hidden; background:#06101F;
+    box-shadow:0 30px 70px rgba(10,22,40,.28), 0 0 0 1px rgba(14,27,48,.10); }
+  .orbit::after { content:''; position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(86% 78% at 50% 46%, rgba(6,16,31,0) 58%, rgba(6,16,31,.55) 100%); }
+  .orbit canvas { position:absolute; inset:0; width:100%; height:100%; }
+  .orbit .chip { position:absolute; z-index:3; transform:translate(-50%,-50%);
+    font-family:var(--head); font-size:11.5px; font-weight:700; letter-spacing:.06em;
+    white-space:nowrap; padding:5px 10px; border-radius:100px;
+    background:rgba(10,22,40,.72); color:rgba(240,246,252,.74);
+    border:1px solid rgba(255,255,255,.14); pointer-events:none;
+    transition:background .3s var(--ease), color .3s var(--ease),
+               border-color .3s var(--ease), box-shadow .3s var(--ease); }
+  .orbit .chip[data-done="1"] { color:#EFF1FF; border-color:rgba(68,199,244,.45); }
+  .orbit .chip[data-on="1"] { background:var(--accent); color:var(--bg-deep);
+    border-color:var(--accent); box-shadow:0 0 22px rgba(68,199,244,.5); }
+  .orbit .hub { position:absolute; z-index:3; left:50%; top:50%;
+    transform:translate(-50%,-50%); text-align:center; pointer-events:none; width:58%; }
+  .hub .k { font-family:var(--head); font-size:11px; font-weight:700; letter-spacing:.2em;
+    text-transform:uppercase; color:rgba(255,255,255,.55); transition:color .4s var(--ease); }
+  .hub .k[data-done="1"] { color:var(--accent); }
+  .hub .n { font-family:var(--head); font-size:80px; font-weight:800; color:#EFF1FF;
+    letter-spacing:-.05em; line-height:1; margin-top:6px; font-variant-numeric:tabular-nums;
+    text-shadow:0 0 34px rgba(68,199,244,.35); }
+  .hub .n span { color:rgba(255,255,255,.34); font-size:.40em; letter-spacing:-.02em; }
+  .hub .s { font-family:var(--head); font-size:17px; font-weight:700; color:var(--accent); margin-top:8px; }
+  .hub .bar { display:flex; gap:3px; justify-content:center; margin-top:12px; }
+  .hub .bar i { display:block; width:14px; height:3px; border-radius:2px;
+    background:rgba(255,255,255,.16); transition:background .35s var(--ease); }
+  .hub .bar i[data-done="1"] { background:var(--accent); }
+</style>
+</head>
+<body>
+  <div class="orbit" id="orbit">
+    <canvas id="path" aria-hidden="true"></canvas>
+    <div class="hub">
+      <div class="k" id="hK" data-done="0">Parts In Place</div>
+      <div class="n" id="hN">00<span>/11</span></div>
+      <div class="s" id="hS">Profile</div>
+      <div class="bar" id="hBar"></div>
+    </div>
+  </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+  // The preset is read off the URL so one file renders every direction:
+  //   _orbit-lab.html?p=instrument | ?p=deepfield | ?p=forge
+  window.ORBIT_PRESET = new URLSearchParams(location.search).get('p') || 'deepfield';
+</script>
+<script src="_comet2.js"></script>
+</body>
+</html>
