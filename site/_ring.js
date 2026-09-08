@@ -102,34 +102,47 @@
      exactly like the ribbon it replaced. This shades along the normal, so the rod
      has a lit top and an underside that falls away. uGhost swaps the fill for a
      rim-only outline; uHeat is the white pop on contact. */
-  function segMaterial() {
-    return new THREE.ShaderMaterial({
-      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-      uniforms: {
-        uOpacity: { value: 0.0 }, uHeat: { value: 0.0 }, uGhost: { value: 1.0 },
-        uHot: { value: 0.55 },
-        uCool: { value: new THREE.Color(CYAN) },
-        uWhite: { value: new THREE.Color(0xFFF6EA) }
-      },
-      vertexShader:
-        'varying vec3 vN; varying vec3 vW;' +
-        'void main(){ vN = normalize(normalMatrix * normal);' +
-        ' vec4 mv = modelViewMatrix * vec4(position,1.0); vW = mv.xyz;' +
-        ' gl_Position = projectionMatrix * mv; }',
-      fragmentShader:
-        'varying vec3 vN; varying vec3 vW;' +
-        'uniform float uOpacity; uniform float uHeat; uniform float uHot; uniform float uGhost;' +
-        'uniform vec3 uCool; uniform vec3 uWhite;' +
-        'void main(){' +
-        ' vec3 v = normalize(-vW);' +
-        ' float face = clamp(dot(normalize(vN), v), 0.0, 1.0);' +
-        ' float rim  = pow(1.0 - face, 2.2);' +
-        ' float body = 0.34 + 0.66 * face;' +
-        ' float toWhite = (uHot * face + rim * 0.5 + uHeat) * (1.0 - uGhost);' +
-        ' vec3 col = mix(uCool, uWhite, clamp(toWhite, 0.0, 1.0));' +
-        ' float a = uOpacity * mix(body + rim * 0.85, rim * 2.6, uGhost);' +
-        ' gl_FragColor = vec4(col * (1.0 + uHeat * 1.8), a); }'
-    });
+  function segMaterials() {
+    // ONE uniforms object, shared by both materials, so the per-frame updates in
+    // the loop reach the caps without touching them separately.
+    var u = {
+      uOpacity: { value: 0.0 }, uHeat: { value: 0.0 }, uGhost: { value: 1.0 },
+      uHot: { value: 0.55 },
+      uCool: { value: new THREE.Color(CYAN) },
+      uWhite: { value: new THREE.Color(0xFFF6EA) }
+    };
+    var vert =
+      'varying vec3 vN; varying vec3 vW;' +
+      'void main(){ vN = normalize(normalMatrix * normal);' +
+      ' vec4 mv = modelViewMatrix * vec4(position,1.0); vW = mv.xyz;' +
+      ' gl_Position = projectionMatrix * mv; }';
+    var common =
+      'varying vec3 vN; varying vec3 vW;' +
+      'uniform float uOpacity; uniform float uHeat; uniform float uHot; uniform float uGhost;' +
+      'uniform vec3 uCool; uniform vec3 uWhite;' +
+      'void main(){' +
+      ' vec3 v = normalize(-vW);' +
+      ' float face = clamp(dot(normalize(vN), v), 0.0, 1.0);' +
+      ' float rim  = pow(1.0 - face, 1.7);' +
+      ' float body = 0.34 + 0.66 * face;' +
+      ' float toWhite = (uHot * face + rim * 0.5 + uHeat) * (1.0 - uGhost);' +
+      ' vec3 col = mix(uCool, uWhite, clamp(toWhite, 0.0, 1.0));';
+    function make(alpha) {
+      return new THREE.ShaderMaterial({
+        transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+        uniforms: u, vertexShader: vert,
+        fragmentShader: common + alpha + ' gl_FragColor = vec4(col * (1.0 + uHeat * 1.8), a); }'
+      });
+    }
+    return {
+      uniforms: u,
+      // the rod: solid when seated, rim-only outline while it is still floating
+      body: make(' float a = uOpacity * mix(body + rim * 0.85, rim * 2.6, uGhost);'),
+      // the rounded end: FILL only, never a rim. A sphere shaded with a rim term
+      // draws a bright circle, so in the outline state each cap read as a little
+      // donut stuck on the end of the pipe. Ghost parts get no caps at all.
+      cap:  make(' float a = uOpacity * body * 0.86 * (1.0 - uGhost);')
+    };
   }
 
   /* ── the eleven parts ── */
@@ -137,9 +150,20 @@
   var parts = [], baseRot = [];
   for (var i = 0; i < N; i++) {
     var span = (1 / N - GAP * 2) * Math.PI * 2;
-    var g = new THREE.TorusGeometry(R, 0.078, 14, 90, span);
+    var TUBE = 0.078;
+    var g = new THREE.TorusGeometry(R, TUBE, 20, 150, span);
     g.rotateX(Math.PI / 2);         // torus angle now equals world angle
-    var m = new THREE.Mesh(g, segMaterial());
+    var mats = segMaterials();
+    var m = new THREE.Mesh(g, mats.body);
+    m.userData.u = mats.uniforms;
+    // A torus arc ends in a flat disc, so each of the twenty-two ends reads as a
+    // blunt cut. A sphere of the same radius at each end rounds it off. They are
+    // children, so they inherit the part's slide, drop and scale for free.
+    [0, span].forEach(function (a) {
+      var cap = new THREE.Mesh(new THREE.SphereGeometry(TUBE, 16, 12), mats.cap);
+      cap.position.set(Math.cos(a) * R, 0, Math.sin(a) * R);
+      cap.renderOrder = 4; m.add(cap);
+    });
     baseRot.push(-(ang(i / N + GAP)));
     m.rotation.y = baseRot[i];
     m.renderOrder = 4; scene.add(m); parts.push(m);
@@ -302,14 +326,17 @@
   }
 
   var bw = 2, bh = 2;
+  var SS_CAP = 1900;                 // keep the supersampled buffer off a laptop's knees
   function size() {
     var w = host.clientWidth, h = host.clientHeight;
     if (!w || !h) return;
     renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.updateProjectionMatrix();
     var pw = Math.floor(w * DPR), ph = Math.floor(h * DPR);
+    var ss = Math.max(1, Math.min(2, SS_CAP / Math.max(pw, ph)));
     bw = Math.max(2, Math.floor(pw / 2)); bh = Math.max(2, Math.floor(ph / 2));
-    rtScene.setSize(pw, ph); rtA.setSize(bw, bh); rtB.setSize(bw, bh);
+    rtScene.setSize(Math.floor(pw * ss), Math.floor(ph * ss));
+    rtA.setSize(bw, bh); rtB.setSize(bw, bh);
   }
   window.addEventListener('resize', size); size();
 
@@ -413,9 +440,10 @@
       m.position.y = 0.85 * (1 - place);               // and drops into the plane
       m.rotation.y = baseRot[i] - 0.075 * (1 - place); // sliding along until it butts up
       heat[i] = Math.max(0, heat[i] - dt * 3.4);       // the white pop, gone in a third of a second
-      m.material.uniforms.uGhost.value = ghost;
-      m.material.uniforms.uHeat.value = heat[i];
-      m.material.uniforms.uOpacity.value = 0.30 + 0.62 * (1 - ghost);
+      var u = m.userData.u;
+      u.uGhost.value = ghost;
+      u.uHeat.value = heat[i];
+      u.uOpacity.value = 0.30 + 0.62 * (1 - ghost);
       ticks[i].material.opacity = 0.24 * (0.6 + 1.2 * (1 - ghost));
     }
 
