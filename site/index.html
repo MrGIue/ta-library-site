@@ -669,62 +669,36 @@
 
 <!-- The hero graphic. Source of truth is site/_comet2.js; build.py splices it
      here so the file can be rendered on its own in _orbit-lab.html. -->
-<script>window.ORBIT_PRESET = "deepfield";</script>
 <script>
 (function () {
   'use strict';
 
-  /* ══ the assembly run, v2 ═══════════════════════════════════════════════════
-     Same argument as v1 and Joe's own: the analogy is ASSEMBLY, not collection.
-     Eleven arc segments float apart, visibly not a thing yet. A comet flies the
-     path and seats each one in order until the ring closes and reads as a system.
+  /* ══ the ring assembly ══════════════════════════════════════════════════════
+     Eleven parts click into one ring, forever, with no seam.
 
-     What changed, and why. Joe, 2026-09-07: "that graphic isnt quite there, the
-     quality and detail needs to be turned up." v1 was a diagram — flat ribbons at
-     twelve percent opacity, a nucleus with no light spill, chips floating loose
-     with nothing tying them to the ring. Four lifts:
+     Joe, 2026-09-07: "lets get rid of the astroid, keep the rings, just speed them
+     up on how they fall into place and click in with eachother - we want an
+     animation/motion graphic thats an infinite loop that doesnt have a detectable
+     clip."
 
-       1. REAL BLOOM. A self-contained bright-pass and blur chain, composited back.
-          No post-processing bundle to load: six extra script tags is six more ways
-          for a pasted WordPress block to fail, and this scene is all additive
-          emissive on near-black, which is the easy case.
-       2. The segments are TUBES, not ribbons. Real geometry with normals, so they
-          have a lit top and a dark underside and a silhouette that survives bloom.
-       3. Every chip is SPOKED to its own segment. A floating label reads as
-          separate UI; a label on a leader line reads as part of the machine.
-       4. Seating is an EVENT. A shockwave ring and a spark burst, so eleven
-          arrivals are eleven moments rather than a slow opacity ramp.
+     Three consequences, and each one drove a real change:
 
-     One engine, three presets, chosen with window.ORBIT_PRESET.
+       NO COMET. The nucleus, its coma, both tails and the eight-thousand-particle
+       emitter are gone. Nothing external places the parts now — they arrive on
+       their own, which is a cleaner reading of the argument anyway.
+
+       THE CLICK IS THE EVENT. Each part comes in from outside and slightly ahead
+       of its slot, overshoots on a back ease, and settles against its neighbour.
+       It flashes white on contact and throws a small shockwave. Eleven of those in
+       two and a half seconds is the motion.
+
+       NO DETECTABLE CLIP. The old version snapped from a full ring to an empty one
+       in a single frame, which is the seam he saw. Now the parts release in the
+       same order they arrived, so a ripple travels the ring and runs straight into
+       the next arrival ripple. Every position and every opacity is identical either
+       side of the loop point, and the cycle is 4.50s on the nose, so 108 frames at
+       24fps is a perfect loop.
      ═════════════════════════════════════════════════════════════════════════ */
-
-  var PRESETS = {
-    // Precision engineering. The ring as an instrument being assembled: strong
-    // ticks and spokes, restrained glow, the comet the only truly bright thing.
-    instrument: {
-      bloom: 0.85, bloomThreshold: 0.30, tube: 0.044, segHot: 0.35,
-      spoke: 0.55, tick: 0.55, starAlpha: 0.0, tailAlpha: 0.18, tailScale: 10.0,
-      shock: 0.55, shockColor: 0x44C7F4, sparks: 90, heat: 0.0, guides: 0.22,
-      tilt: 1.28, dial: 1
-    },
-    // Cinematic. The glow does the work: wide bloom, a long bright tail, deep
-    // star field. The ring closing is the payoff shot.
-    deepfield: {
-      bloom: 1.45, bloomThreshold: 0.20, tube: 0.078, segHot: 0.55,
-      spoke: 0.20, tick: 0.24, starAlpha: 0.62, tailAlpha: 0.34, tailScale: 14.0,
-      shock: 1.0, shockColor: 0x44C7F4, sparks: 150, heat: 0.0, guides: 0.10,
-      tilt: 0.70, dial: 0
-    },
-    // Forged. Each segment arrives white-hot and cools to electric over about a
-    // second and a half, with a white shockwave and a spark burst on impact.
-    forge: {
-      bloom: 1.35, bloomThreshold: 0.22, tube: 0.086, segHot: 0.5,
-      spoke: 0.22, tick: 0.26, starAlpha: 0.5, tailAlpha: 0.30, tailScale: 13.0,
-      shock: 1.25, shockColor: 0xFFF3E2, sparks: 260, heat: 1.0, guides: 0.10,
-      tilt: 0.70, dial: 0
-    }
-  };
-  var CFG = PRESETS[window.ORBIT_PRESET] || PRESETS.deepfield;
 
   var STAGES = [
     { n: 'Profile', g: 2 }, { n: 'Content', g: 3 }, { n: 'Engagement', g: 1 },
@@ -738,6 +712,20 @@
   });
   var N = GUIDE_STAGE.length;
 
+  /* ── the loop clock ──────────────────────────────────────────────────────── */
+  var STEP = 0.20;                 // between one part landing and the next starting
+  var DUR = 0.34;                  // how long a single part takes to fly in and settle
+  var ASSEMBLE = (N - 1) * STEP + DUR;
+  var HOLD = 1.38;                 // the finished ring, held
+  // The release is a WAVE, not a switch. Every part letting go at once is a global
+  // event and the eye reads it as the loop point however softly it is faded. A
+  // ripple travelling the ring in the order the parts arrived flows straight into
+  // the next arrival ripple, so what you see is continuous motion around the ring
+  // with nothing to mark where one pass ends.
+  var STEP_R = 0.05, DUR_R = 0.28;
+  var RETURN = (N - 1) * STEP_R + DUR_R;
+  var CYCLE = ASSEMBLE + HOLD + RETURN;   // 4.50s exactly, so 108 frames at 24fps loops
+
   var host = document.getElementById('orbit'), cv = document.getElementById('path');
   var hK = document.getElementById('hK'), hN = document.getElementById('hN'),
       hS = document.getElementById('hS'), hBar = document.getElementById('hBar');
@@ -749,21 +737,27 @@
   if (!window.THREE) { cv.style.display = 'none'; return; }
 
   var DPR = Math.min(window.devicePixelRatio || 1, 2);
-  var renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: false });
+  // preserveDrawingBuffer only while recording. WebGL clears the drawing buffer
+  // after compositing, so a screenshot taken between a manual draw and the next
+  // one comes back EMPTY — a black frame with only the DOM labels on it, which
+  // looks exactly like an animation bug and is not one. It costs performance, so
+  // it is gated on the capture flag and never on for a visitor.
+  var renderer = new THREE.WebGLRenderer({
+    canvas: cv, antialias: true, alpha: false,
+    preserveDrawingBuffer: !!window.__ORBIT_FIXED_DT
+  });
   renderer.setPixelRatio(DPR);
   renderer.setClearColor(0x06101F, 1);
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(32, 1, 0.1, 120);
-  // Tighter FOV and a shorter throw than v1, so the ring fills more of the frame.
-  var TILT = CFG.tilt, CAM_D = CFG.dial ? 19.8 : 17.2;
+  var TILT = 0.70, CAM_D = 17.2;
   camera.position.set(0, Math.sin(TILT) * CAM_D, Math.cos(TILT) * CAM_D);
   camera.lookAt(0, 0, 0);
 
-  var R = 4.0, A0 = -Math.PI / 2;          // part 01 sits at 12 o'clock, running clockwise
+  var R = 4.0, A0 = -Math.PI / 2;   // part 01 sits at 12 o'clock, running clockwise
   var CYAN = 0x44C7F4;
   function ang(t) { return A0 + t * Math.PI * 2; }
 
-  /* ── a flat ribbon arc, still used for the hairline guide rings ── */
   function ribbon(fromT, toT, rad, halfW, seg) {
     var g = new THREE.BufferGeometry(), pos = [], idx = [];
     for (var i = 0; i <= seg; i++) {
@@ -775,17 +769,17 @@
     g.setIndex(idx); return g;
   }
 
-  /* ── the segment material: a lit rod, not a line ────────────────────────────
-     Basic materials ignore normals, so a tube rendered with one flat colour reads
-     exactly like the ribbon it replaced. This shades along the normal so the top
-     catches light and the underside falls away, and pushes a hot core through the
-     middle that bloom then blows out. uHeat drives the forge preset's cooling. */
-  function segMaterial(hot) {
+  /* ── the segment material: a lit rod, not a line ──
+     Basic materials ignore normals, so a tube rendered in one flat colour reads
+     exactly like the ribbon it replaced. This shades along the normal, so the rod
+     has a lit top and an underside that falls away. uGhost swaps the fill for a
+     rim-only outline; uHeat is the white pop on contact. */
+  function segMaterial() {
     return new THREE.ShaderMaterial({
       transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
       uniforms: {
-        uOpacity: { value: 0.0 }, uHeat: { value: 0.0 }, uHot: { value: hot },
-        uGhost: { value: 1.0 },
+        uOpacity: { value: 0.0 }, uHeat: { value: 0.0 }, uGhost: { value: 1.0 },
+        uHot: { value: 0.55 },
         uCool: { value: new THREE.Color(CYAN) },
         uWhite: { value: new THREE.Color(0xFFF6EA) }
       },
@@ -800,36 +794,34 @@
         'uniform vec3 uCool; uniform vec3 uWhite;' +
         'void main(){' +
         ' vec3 v = normalize(-vW);' +
-        // facing the camera is the lit top of the rod; the grazing edge is the rim
         ' float face = clamp(dot(normalize(vN), v), 0.0, 1.0);' +
         ' float rim  = pow(1.0 - face, 2.2);' +
         ' float body = 0.34 + 0.66 * face;' +
         ' float toWhite = (uHot * face + rim * 0.5 + uHeat) * (1.0 - uGhost);' +
         ' vec3 col = mix(uCool, uWhite, clamp(toWhite, 0.0, 1.0));' +
-        // solid when seated, outline only while it is still floating
         ' float a = uOpacity * mix(body + rim * 0.85, rim * 2.6, uGhost);' +
-        ' gl_FragColor = vec4(col * (1.0 + uHeat * 1.6), a); }'
+        ' gl_FragColor = vec4(col * (1.0 + uHeat * 1.8), a); }'
     });
   }
 
-  /* ── the eleven parts, as real tubes ── */
-  var GAP = 0.010;                         // the seam that makes them read as separate pieces
-  var parts = [], seat = new Float32Array(N), heat = new Float32Array(N);
+  /* ── the eleven parts ── */
+  var GAP = 0.010;                  // the seam that makes them read as separate pieces
+  var parts = [], baseRot = [];
   for (var i = 0; i < N; i++) {
     var span = (1 / N - GAP * 2) * Math.PI * 2;
-    var g = new THREE.TorusGeometry(R, CFG.tube, 14, 90, span);
-    g.rotateX(Math.PI / 2);                // torus angle now equals world angle
-    var m = new THREE.Mesh(g, segMaterial(CFG.segHot));
-    m.rotation.y = -(ang(i / N + GAP));    // rotating by -a shifts the start to a
+    var g = new THREE.TorusGeometry(R, 0.078, 14, 90, span);
+    g.rotateX(Math.PI / 2);         // torus angle now equals world angle
+    var m = new THREE.Mesh(g, segMaterial());
+    baseRot.push(-(ang(i / N + GAP)));
+    m.rotation.y = baseRot[i];
     m.renderOrder = 4; scene.add(m); parts.push(m);
   }
 
   /* ── two hairline guide rings, so the empty state still reads as an instrument ── */
   [R * 1.20, R * 0.64].forEach(function (rr) {
     var g = new THREE.Mesh(ribbon(0, 1, rr, 0.004, 240),
-      new THREE.MeshBasicMaterial({ color: CYAN, transparent: true,
-        opacity: CFG.guides, side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
-        depthWrite: false }));
+      new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: 0.10,
+        side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
     g.renderOrder = 1; scene.add(g);
   });
 
@@ -838,201 +830,92 @@
   for (var i = 0; i < N; i++) {
     var a = ang(i / N);
     var t = new THREE.Mesh(new THREE.PlaneGeometry(0.40, 0.014),
-      new THREE.MeshBasicMaterial({ color: 0xFFFFFF, transparent: true,
-        opacity: CFG.tick, side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
-        depthWrite: false }));
+      new THREE.MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, opacity: 0.24,
+        side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
     t.rotation.x = -Math.PI / 2; t.rotation.z = -a;
     t.position.set(Math.cos(a) * (R + 0.38), 0, Math.sin(a) * (R + 0.38));
     t.renderOrder = 2; scene.add(t); ticks.push(t);
   }
 
-  /* ── the dial's graduated scale, instrument preset only ── */
-  if (CFG.dial) {
-    for (var i = 0; i < 88; i++) {
-      var a = ang(i / 88), major = i % 8 === 0;
-      var t = new THREE.Mesh(new THREE.PlaneGeometry(major ? 0.30 : 0.15, 0.010),
-        new THREE.MeshBasicMaterial({ color: CYAN, transparent: true,
-          opacity: major ? 0.42 : 0.17, side: THREE.DoubleSide,
-          blending: THREE.AdditiveBlending, depthWrite: false }));
-      t.rotation.x = -Math.PI / 2; t.rotation.z = -a;
-      t.position.set(Math.cos(a) * (R * 1.06), 0, Math.sin(a) * (R * 1.06));
-      t.renderOrder = 1; scene.add(t);
-    }
-  }
-
-  /* ── a spoke from every stage label to its own first segment ─────────────────
-     v1 left the chips floating. A label with nothing joining it to the ring reads
-     as an overlay someone dropped on top of a render; a label on a leader line is
-     part of the same object. Joe has called this out before on other graphics. */
+  /* ── a spoke from every stage label to its own first segment ──
+     A floating label reads as an overlay dropped on a render; a label on a leader
+     line is part of the same object. */
   var spokes = STAGE_FIRST.map(function (gi) {
     var a = ang((gi + 0.5) / N);
-    var geo = new THREE.PlaneGeometry(R * 0.32, 0.026);
-    var mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
-      color: CYAN, transparent: true, opacity: CFG.spoke,
-      side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
+    var mesh = new THREE.Mesh(new THREE.PlaneGeometry(R * 0.32, 0.026),
+      new THREE.MeshBasicMaterial({ color: CYAN, transparent: true, opacity: 0.20,
+        side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
     mesh.rotation.x = -Math.PI / 2; mesh.rotation.z = -a;
     mesh.position.set(Math.cos(a) * (R * 1.145), 0, Math.sin(a) * (R * 1.145));
     mesh.renderOrder = 2; scene.add(mesh);
     return mesh;
   });
 
-  /* ── a shockwave ring, fired when a part seats ── */
-  var WAVES = 4, waves = [];
+  /* ── the shockwave thrown by a part landing ── */
+  var WAVES = 6, waves = [];
   for (var i = 0; i < WAVES; i++) {
     var w = new THREE.Mesh(new THREE.RingGeometry(0.30, 0.34, 56), new THREE.MeshBasicMaterial({
-      color: CFG.shockColor, transparent: true, opacity: 0, side: THREE.DoubleSide,
+      color: CYAN, transparent: true, opacity: 0, side: THREE.DoubleSide,
       blending: THREE.AdditiveBlending, depthWrite: false }));
     w.rotation.x = -Math.PI / 2; w.renderOrder = 6; w.visible = false;
     scene.add(w); waves.push({ mesh: w, t: 1 });
   }
   var waveNext = 0;
-  function fireWave(x, z) {
-    if (CFG.shock <= 0) return;
+  function fireWave(a) {
     var w = waves[waveNext]; waveNext = (waveNext + 1) % WAVES;
-    w.mesh.position.set(x, 0.002, z); w.mesh.visible = true; w.t = 0;
+    w.mesh.position.set(Math.cos(a) * R, 0.002, Math.sin(a) * R);
+    w.mesh.visible = true; w.t = 0;
   }
 
-  /* ── a crisp point shader for stars, coma, tails and sparks ── */
+  /* ── the star field, in two parallax shells ── */
   function pointMat(scale, alpha) {
     return new THREE.ShaderMaterial({
       transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
       uniforms: { uPR: { value: DPR }, uScale: { value: scale }, uAlpha: { value: alpha } },
       vertexShader:
-        'attribute float aAge; attribute float aSize; attribute float aKind;' +
-        'varying float vAge; varying float vKind; uniform float uPR; uniform float uScale;' +
-        'void main(){ vAge=aAge; vKind=aKind;' +
+        'attribute float aAge; attribute float aSize;' +
+        'varying float vAge; uniform float uPR; uniform float uScale;' +
+        'void main(){ vAge=aAge;' +
         ' vec4 mv = modelViewMatrix * vec4(position,1.0);' +
-        ' gl_PointSize = aSize * (1.0 - aAge*0.45) * uPR * uScale / -mv.z;' +
+        ' gl_PointSize = aSize * uPR * uScale / -mv.z;' +
         ' gl_Position = projectionMatrix * mv; }',
       fragmentShader:
-        'varying float vAge; varying float vKind; uniform float uAlpha;' +
+        'varying float vAge; uniform float uAlpha;' +
         'void main(){ vec2 c = gl_PointCoord - 0.5; float d = length(c);' +
         // a tight crisp core, never a soft gradient blob — density carries the glow
         ' float core = smoothstep(0.5, 0.02, d); core = pow(core, 2.4);' +
         ' float a = core * (1.0 - vAge); a *= a * uAlpha;' +
         ' if (a < 0.003) discard;' +
-        ' vec3 hot  = vec3(1.00, 1.00, 0.99);' +
-        ' vec3 dust = vec3(0.66, 0.87, 1.00);' +
-        ' vec3 ion  = vec3(0.24, 0.75, 1.00);' +
-        ' vec3 col = mix(dust, ion, clamp(vKind, 0.0, 1.0));' +
-        ' col = mix(hot, col, clamp(vAge * 2.6, 0.0, 1.0));' +
-        ' gl_FragColor = vec4(col, a); }'
+        ' gl_FragColor = vec4(vec3(0.66, 0.87, 1.00), a); }'
     });
   }
-
-  /* ── the star field, in two parallax shells ── */
-  (CFG.starAlpha <= 0 ? [] :
-   [{ n: 300, near: 7, far: 15, size: 2.0, a: 1.0 },
-    { n: 260, near: 15, far: 26, size: 1.3, a: 0.6 }]).forEach(function (shell) {
+  var shells = [];
+  [{ n: 300, near: 7, far: 15, size: 2.0, a: 1.0, spin: 0.010 },
+   { n: 260, near: 15, far: 26, size: 1.3, a: 0.6, spin: 0.005 }].forEach(function (shell) {
     var sg = new THREE.BufferGeometry();
-    var sp = new Float32Array(shell.n * 3), sa = new Float32Array(shell.n),
-        ss = new Float32Array(shell.n), sk = new Float32Array(shell.n);
+    var sp = new Float32Array(shell.n * 3), sa = new Float32Array(shell.n), ss = new Float32Array(shell.n);
     for (var i = 0; i < shell.n; i++) {
       var rr = shell.near + Math.random() * (shell.far - shell.near), aa = Math.random() * Math.PI * 2;
       sp[i*3] = Math.cos(aa) * rr; sp[i*3+1] = (Math.random() - .5) * 11; sp[i*3+2] = Math.sin(aa) * rr;
       sa[i] = 0.30 + Math.random() * 0.34;
       ss[i] = shell.size * (0.7 + Math.random() * 1.3);
-      sk[i] = Math.random() * .5;
     }
     sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
     sg.setAttribute('aAge', new THREE.BufferAttribute(sa, 1));
     sg.setAttribute('aSize', new THREE.BufferAttribute(ss, 1));
-    sg.setAttribute('aKind', new THREE.BufferAttribute(sk, 1));
-    var pts = new THREE.Points(sg, pointMat(9.0, CFG.starAlpha * shell.a));
+    var pts = new THREE.Points(sg, pointMat(9.0, 0.62 * shell.a));
     pts.renderOrder = 0; scene.add(pts);
+    shells.push({ pts: pts, spin: shell.spin });
   });
 
-  /* ── the nucleus ── */
-  var nucGeo = new THREE.IcosahedronGeometry(0.155, 1);
-  var np = nucGeo.attributes.position;
-  for (var i = 0; i < np.count; i++) {                       // rough it up so it reads as rock
-    var f = 0.74 + Math.random() * 0.5;
-    np.setXYZ(i, np.getX(i) * f, np.getY(i) * f, np.getZ(i) * f);
-  }
-  np.needsUpdate = true; nucGeo.computeVertexNormals();
-  var nucleus = new THREE.Mesh(nucGeo, new THREE.MeshBasicMaterial({ color: 0xFFFFFF }));
-  nucleus.renderOrder = 12; scene.add(nucleus);
-  var halo = new THREE.Mesh(new THREE.CircleGeometry(0.40, 40), new THREE.ShaderMaterial({
-    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-    uniforms: { uCol: { value: new THREE.Color(0x9FE0FF) } },
-    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
-    fragmentShader: 'varying vec2 vUv; uniform vec3 uCol;' +
-      'void main(){ float d = length(vUv - 0.5) * 2.0;' +
-      ' float a = pow(max(0.0, 1.0 - d), 3.6) * 0.46;' +
-      ' gl_FragColor = vec4(uCol, a); }'
-  }));
-  halo.rotation.x = -Math.PI / 2; halo.renderOrder = 11; scene.add(halo);
-
-  /* ── the tails ── */
-  var P = 8600, cur = 0;
-  var pg = new THREE.BufferGeometry();
-  var pPos = new Float32Array(P * 3), pAge = new Float32Array(P),
-      pSize = new Float32Array(P), pKind = new Float32Array(P);
-  var vx = new Float32Array(P), vy = new Float32Array(P), vz = new Float32Array(P),
-      age = new Float32Array(P), life = new Float32Array(P);
-  for (var i = 0; i < P; i++) { pAge[i] = 1; life[i] = 1; }
-  pg.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-  pg.setAttribute('aAge', new THREE.BufferAttribute(pAge, 1));
-  pg.setAttribute('aSize', new THREE.BufferAttribute(pSize, 1));
-  pg.setAttribute('aKind', new THREE.BufferAttribute(pKind, 1));
-  var tails = new THREE.Points(pg, pointMat(CFG.tailScale, CFG.tailAlpha));
-  tails.renderOrder = 8; scene.add(tails);
-
-  function emit(t0h, t1h, n, boost) {
-    for (var k = 0; k < n; k++) {
-      var i = cur; cur = (cur + 1) % P;
-      var u = Math.random();
-      var th = t0h + (t1h - t0h) * u;                 // sub-frame position along the arc
-      var aa = ang(th), x = Math.cos(aa) * R, z = Math.sin(aa) * R;
-      var tx = -Math.sin(aa), tz = Math.cos(aa);
-      var ox = Math.cos(aa), oz = Math.sin(aa);       // outward from the hub
-      var ion = Math.random() < 0.34;
-      var slow = Math.random() < 0.032;                // these stay and form the coma
-      var back = slow ? 0.05 : (ion ? 2.90 : 1.90) * (0.6 + Math.random() * 0.8) * boost;
-      var out  = slow ? 0.04 : (ion ? 0.60 : 0.10) * (0.5 + Math.random());
-      var jit  = slow ? 0.11 : (ion ? 0.03 : 0.34);
-      pPos[i*3]   = x + (Math.random() - .5) * 0.10;
-      pPos[i*3+1] = (Math.random() - .5) * (ion ? 0.05 : 0.14);
-      pPos[i*3+2] = z + (Math.random() - .5) * 0.10;
-      vx[i] = -tx * back + ox * out + (Math.random() - .5) * jit;
-      vy[i] = (Math.random() - .5) * jit * 0.7;
-      vz[i] = -tz * back + oz * out + (Math.random() - .5) * jit;
-      life[i] = slow ? 0.40 + Math.random() * 0.30
-                     : (ion ? 2.6 + Math.random() * 1.6 : 4.0 + Math.random() * 2.5);
-      age[i] = 0;
-      pSize[i] = slow ? 2.2 + Math.random() * 2.4
-                      : (ion ? 1.5 + Math.random() * 1.7 : 2.4 + Math.random() * 3.6);
-      pKind[i] = ion ? 1 : 0;
-    }
-  }
-
-  /* ── sparks: a hard radial burst at the seam, thrown when a part lands ── */
-  function sparkBurst(aa, n) {
-    var x = Math.cos(aa) * R, z = Math.sin(aa) * R;
-    for (var k = 0; k < n; k++) {
-      var i = cur; cur = (cur + 1) % P;
-      var dir = Math.random() * Math.PI * 2, up = (Math.random() - .5) * 2.2;
-      var sp = 1.6 + Math.random() * 4.4;
-      pPos[i*3] = x; pPos[i*3+1] = 0; pPos[i*3+2] = z;
-      vx[i] = Math.cos(dir) * sp; vy[i] = up; vz[i] = Math.sin(dir) * sp;
-      life[i] = 0.34 + Math.random() * 0.62;
-      age[i] = 0;
-      pSize[i] = 1.6 + Math.random() * 3.0;
-      pKind[i] = 0;                                   // dust colours read hot at low age
-    }
-  }
-
-  /* ── bloom, self-contained ─────────────────────────────────────────────────
-     A bright pass at half resolution, then four ping-pong blur pairs at growing
-     radius, composited back over the scene. Loading EffectComposer and
-     UnrealBloomPass would mean five more CDN files inside a pasted WordPress
-     block, and every one of them is a way for the hero graphic to silently not
-     render. Everything here is additive emissive on near-black, which is the
-     case a hand-rolled bloom handles well. */
+  /* ── bloom, self-contained ──
+     EffectComposer plus UnrealBloomPass would mean five more CDN files inside a
+     block that gets pasted into WordPress, and each one is a way for the hero to
+     silently not render. This scene is all additive emissive on near-black, which
+     is the case a bright-pass-and-blur chain handles well. */
   var quadCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-  var quadGeo = new THREE.PlaneGeometry(2, 2);
   var quadScene = new THREE.Scene();
-  var quad = new THREE.Mesh(quadGeo, null);
+  var quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), null);
   quadScene.add(quad);
 
   function rt(w, h) {
@@ -1044,14 +927,13 @@
   var rtScene = rt(2, 2), rtA = rt(2, 2), rtB = rt(2, 2);
 
   var brightMat = new THREE.ShaderMaterial({
-    uniforms: { tSrc: { value: null }, uCut: { value: CFG.bloomThreshold } },
+    uniforms: { tSrc: { value: null }, uCut: { value: 0.20 } },
     vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0); }',
     fragmentShader:
       'varying vec2 vUv; uniform sampler2D tSrc; uniform float uCut;' +
       'void main(){ vec3 c = texture2D(tSrc, vUv).rgb;' +
       ' float l = dot(c, vec3(0.2126,0.7152,0.0722));' +
-      // a soft knee, so a segment just under the cut still contributes a little
-      ' float k = smoothstep(uCut, uCut + 0.28, l);' +
+      ' float k = smoothstep(uCut, uCut + 0.28, l);' +   // a soft knee, so a dim part still contributes
       ' gl_FragColor = vec4(c * k, 1.0); }'
   });
   var blurMat = new THREE.ShaderMaterial({
@@ -1067,15 +949,19 @@
       ' gl_FragColor = vec4(s, 1.0); }'
   });
   var compMat = new THREE.ShaderMaterial({
-    uniforms: { tBase: { value: null }, tGlow: { value: null }, uAmt: { value: CFG.bloom } },
+    uniforms: { tBase: { value: null }, tGlow: { value: null },
+                uAmt: { value: 1.45 }, uFlash: { value: 0.0 } },
     vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0); }',
     fragmentShader:
-      'varying vec2 vUv; uniform sampler2D tBase; uniform sampler2D tGlow; uniform float uAmt;' +
+      'varying vec2 vUv; uniform sampler2D tBase; uniform sampler2D tGlow;' +
+      'uniform float uAmt; uniform float uFlash;' +
       'void main(){ vec3 b = texture2D(tBase, vUv).rgb; vec3 g = texture2D(tGlow, vUv).rgb;' +
       ' vec3 c = b + g * uAmt;' +
-      // Compress ONLY the range above 1.0. A shoulder applied to the whole frame
-      // lifts the near-black ground and the deep navy turns to slate — that is
-      // exactly what the first render did.
+      // the pulse that covers the loop point, brightest at the centre of the frame
+      ' float r = 1.0 - length(vUv - 0.5) * 1.25;' +
+      ' c += vec3(0.62, 0.84, 1.00) * uFlash * clamp(r, 0.0, 1.0);' +
+      // compress ONLY what is above 1.0; a shoulder over the whole frame lifts the
+      // near-black ground and turns the deep navy to slate
       ' vec3 over = max(vec3(0.0), c - vec3(1.0));' +
       ' c = min(c, vec3(1.0)) + over / (vec3(1.0) + over);' +
       ' gl_FragColor = vec4(c, 1.0); }'
@@ -1120,9 +1006,19 @@
     pass(compMat, null);
   }
 
-  var LAP = 30, head = 0, seated = 0, lastStage = -1, lastIdx = -1;
-  var proj = new THREE.Vector3(), t0 = performance.now(), prevHead = 0;
-  var hold = 0, lastCount = -1, complete = false;
+  /* ── easing ──
+     backOut overshoots past its target and settles. That overshoot IS the click:
+     the part arrives a fraction too far, touches its neighbour, and rocks back. */
+  function backOut(u) {
+    var c1 = 2.10, c3 = c1 + 1;
+    var p = u - 1;
+    return 1 + c3 * p * p * p + c1 * p * p;
+  }
+  function easeInOut(u) { return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; }
+
+  var proj = new THREE.Vector3(), t0 = performance.now(), clock = 0;
+  var heat = new Float32Array(N), clicked = new Uint8Array(N);
+  var lastCount = -1, lastStage = -1, lastDone = -1;
   var hSuffix = document.createElement('span'); hSuffix.textContent = '/11';
 
   function placeChips() {
@@ -1145,114 +1041,83 @@
     // performance.now(), so dt arrives negative. Clamp both ends.
     //
     // window.__ORBIT_FIXED_DT makes the loop advance by a fixed step per frame
-    // instead of by wall clock. A screen recorder can then sample every frame no
-    // matter how slow its encoder is, which is the difference between a smooth
-    // clip and an eight-frame-a-second flipbook. Never set in production.
+    // instead of by wall clock, so a recorder can sample every frame no matter how
+    // slow its encoder is. Never set in production.
     var dt = window.__ORBIT_FIXED_DT ||
              Math.min(Math.max((now - t0) / 1000, 0), .05);
     t0 = now;
 
-    if (hold > 0) {                    // the finished ring holds, whole, before it resets
-      hold -= dt;
-      if (hold <= 0) {
-        for (var i = 0; i < N; i++) { seat[i] = 0; heat[i] = 0; }
-        head = 0; prevHead = 0; seated = 0; lastIdx = -1; lastStage = -1;
-        lastCount = -1; complete = false;
-      }
-    } else {
-      var local = (head * N) % 1;
-      var speed = 0.46 + 0.54 * Math.pow(Math.sin(local * Math.PI), 0.8);
-      head = (head + (dt / LAP) * speed) % 1;
-      if (head < 0) head += 1;
-    }
+    var prev = clock;
+    clock = (clock + dt) % CYCLE;
+    if (clock < prev) { for (var i = 0; i < N; i++) clicked[i] = 0; }   // new cycle
 
-    var idx = ((Math.floor(head * N) % N) + N) % N;
-    var a = ang(head), x = Math.cos(a) * R, z = Math.sin(a) * R;
+    // How far through the return the loop is. 0 for most of the cycle; 1 at the
+    // instant the parts are back where they started, which is also the instant the
+    // pulse is brightest, so the crossing is not visible.
+    var releasing = clock >= ASSEMBLE + HOLD;
+    var relT = clock - ASSEMBLE - HOLD;
+    // a swell rather than a strobe: the handoff has no discontinuity to hide, so
+    // this is a beat, not a mask
+    compMat.uniforms.uFlash.value =
+      releasing ? Math.sin(Math.min(1, relT / RETURN) * Math.PI) * 0.16 : 0;
 
-    if (!complete && idx !== lastIdx) {
-      if (lastIdx !== -1) {                                // the part snaps home
-        emit(head, head, 150, 1.8);
-        sparkBurst(ang(idx / N), CFG.sparks);
-        fireWave(Math.cos(ang(idx / N)) * R, Math.sin(ang(idx / N)) * R);
-        if (lastIdx >= 0 && lastIdx < N) heat[lastIdx] = CFG.heat;
-      }
-      if (lastIdx === N - 1 && idx === 0) {                // the eleventh closed the ring
-        seated = N; complete = true; hold = 2.6;
-        heat[N - 1] = CFG.heat;
-      } else {
-        lastIdx = idx; seated = idx;
-      }
-    }
-
-    // seat every part the comet has already passed; the rest float outside the ring
+    var seated = 0;
     for (var i = 0; i < N; i++) {
-      var want = i < seated ? 1 : 0;
-      seat[i] += (want - seat[i]) * Math.min(1, dt * 7.5);
-      var s = seat[i];
-      parts[i].scale.setScalar(1 + 0.115 * (1 - s));         // slides in radially
-      parts[i].position.y = 0.55 * (1 - s);                  // and drops into the plane
-      heat[i] = Math.max(0, heat[i] - dt * 0.68);            // white-hot cools to electric
-      parts[i].material.uniforms.uOpacity.value = 0.30 + 0.62 * s;
-      parts[i].material.uniforms.uGhost.value = 1 - s;
-      parts[i].material.uniforms.uHeat.value = heat[i] * s;
-      ticks[i].material.opacity = CFG.tick * (0.5 + 1.1 * s);
+      var u, ghost, place;
+      if (releasing) {
+        var r = Math.min(1, Math.max(0, (relT - i * STEP_R) / DUR_R));
+        place = 1 - easeInOut(r);
+        ghost = 1 - place;
+        seated++;
+      } else {
+        u = Math.min(1, Math.max(0, (clock - i * STEP) / DUR));
+        place = u <= 0 ? 0 : backOut(u);
+        ghost = 1 - Math.min(1, u * 1.7);
+        if (u >= 1) seated++;
+        // the contact moment: fire once, on the frame the part first touches
+        if (!clicked[i] && u > 0.60) {
+          clicked[i] = 1; heat[i] = 1; fireWave(ang((i + 0.5) / N));
+        }
+      }
+
+      var m = parts[i];
+      m.scale.setScalar(1 + 0.16 * (1 - place));       // slides in radially
+      m.position.y = 0.85 * (1 - place);               // and drops into the plane
+      m.rotation.y = baseRot[i] - 0.075 * (1 - place); // sliding along until it butts up
+      heat[i] = Math.max(0, heat[i] - dt * 3.4);       // the white pop, gone in a third of a second
+      m.material.uniforms.uGhost.value = ghost;
+      m.material.uniforms.uHeat.value = heat[i];
+      m.material.uniforms.uOpacity.value = 0.30 + 0.62 * (1 - ghost);
+      ticks[i].material.opacity = 0.24 * (0.6 + 1.2 * (1 - ghost));
     }
-    spokes.forEach(function (sp, si) {
-      var done = complete || si < lastStage || (si === lastStage);
-      sp.material.opacity = CFG.spoke * (done ? 1.35 : 0.5);
-    });
 
     for (var i = 0; i < WAVES; i++) {
       var w = waves[i];
       if (w.t >= 1) { w.mesh.visible = false; continue; }
-      w.t = Math.min(1, w.t + dt * 3.1);
+      w.t = Math.min(1, w.t + dt * 3.4);
       var e = 1 - Math.pow(1 - w.t, 3);
       w.mesh.scale.setScalar(0.4 + e * 2.5);
-      w.mesh.material.opacity = (1 - w.t) * (1 - w.t) * CFG.shock;
+      w.mesh.material.opacity = (1 - w.t) * (1 - w.t);
     }
 
-    if (!complete) {
-      nucleus.visible = halo.visible = true;
-      nucleus.position.set(x, 0, z);
-      nucleus.rotation.x += dt * 1.1; nucleus.rotation.y += dt * 1.6;
-      halo.position.set(x, 0.001, z);
-      halo.scale.setScalar(0.94 + Math.sin(now / 300) * 0.06);
-      var span = head - prevHead; if (span < -0.5) span += 1;   // the arc covered this frame
-      emit(prevHead, prevHead + span, Math.round(86 + 74 * speed), 1);
-      prevHead = head;
-    } else {
-      nucleus.visible = halo.visible = false;                 // the ring is the subject now
-    }
+    shells.forEach(function (s) { s.pts.rotation.y += s.spin * dt; });
 
-    for (var i = 0; i < P; i++) {
-      if (age[i] >= life[i]) { pAge[i] = 1; continue; }
-      age[i] += dt;
-      var px = pPos[i*3], pz = pPos[i*3+2];
-      var rl = Math.sqrt(px * px + pz * pz) || 1;
-      var push = (pKind[i] > .5 ? 2.0 : 0.26) * dt;          // solar wind, straight out from the hub
-      vx[i] += (px / rl) * push; vz[i] += (pz / rl) * push;
-      var drag = 1 - (pKind[i] > .5 ? 0.07 : 0.12) * dt;
-      vx[i] *= drag; vy[i] *= drag; vz[i] *= drag;
-      pPos[i*3]   = px + vx[i] * dt;
-      pPos[i*3+1] = pPos[i*3+1] + vy[i] * dt;
-      pPos[i*3+2] = pz + vz[i] * dt;
-      pAge[i] = Math.min(1, age[i] / life[i]);
-    }
-    pg.attributes.position.needsUpdate = true;
-    pg.attributes.aAge.needsUpdate = true;
-    pg.attributes.aSize.needsUpdate = true;
-    pg.attributes.aKind.needsUpdate = true;
-
-    var si = complete ? STAGES.length - 1 : GUIDE_STAGE[idx];
-    if (si !== lastStage || complete !== (hK.dataset.done === '1')) {
-      lastStage = si;
-      hK.dataset.done = complete ? '1' : '0';
+    var complete = clock >= ASSEMBLE;
+    var si = complete ? STAGES.length - 1
+                      : GUIDE_STAGE[Math.min(N - 1, Math.max(0, seated))];
+    var done = complete ? 1 : 0;
+    if (si !== lastStage || done !== lastDone) {
+      lastStage = si; lastDone = done;
+      hK.dataset.done = String(done);
       hK.textContent = complete ? 'One Complete System' : 'Parts In Place';
       hS.textContent = complete ? 'All Seven Stages' : STAGES[si].n;
       segs.forEach(function (el, k) { el.dataset.on = (complete || k <= si) ? '1' : '0'; });
       chips.forEach(function (el, k) {
         el.dataset.on = (!complete && k === si) ? '1' : '0';
         el.dataset.done = (complete || k < si) ? '1' : '0';
+      });
+      spokes.forEach(function (sp, k) {
+        sp.material.opacity = 0.20 * ((complete || k <= si) ? 1.35 : 0.5);
       });
     }
     if (seated !== lastCount) {

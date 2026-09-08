@@ -9,16 +9,11 @@ import base64, os, pathlib, re, sys
 ROOT = pathlib.Path(__file__).parent
 COVERS = ROOT / "site" / "covers"
 TEMPLATE = ROOT / "site" / "_template.html"
-COMET = ROOT / "site" / "_comet2.js"
+RING = ROOT / "site" / "_ring.js"
 OUT = ROOT / "site" / "index.html"
 
 PRICE = "$27"
 
-# Which hero-graphic direction ships. Joe picked Deep Field on 2026-09-07 out of
-# three rendered options: Dial (overhead instrument), Deep Field (tilted and
-# cinematic) and Forge (parts land white-hot). Render any of them on their own with
-# site/_orbit-lab.html?p=<name>.
-PRESET = "deepfield"
 # LIVE Stripe payment link, created 2026-09-07 on Trained Advisor Primary
 # (acct_1B4bLYKuIVbq8ZJv, plink_1UD97CKuIVbq8ZJvQd1ZVgmw). $27 one-off, active.
 # It redirects on success to the delivery page with the session id attached.
@@ -104,13 +99,8 @@ def cards() -> str:
 def main() -> None:
     html = TEMPLATE.read_text(encoding="utf-8")
     html = html.replace("<!--GUIDE_CARDS-->", cards())
-    comet = "\n".join([
-        f'<script>window.ORBIT_PRESET = "{PRESET}";</script>',
-        "<script>",
-        COMET.read_text(encoding="utf-8"),
-        "</script>",
-    ])
-    html = html.replace("<!--COMET-->", comet)
+    graphic = "\n".join(["<script>", RING.read_text(encoding="utf-8"), "</script>"])
+    html = html.replace("<!--COMET-->", graphic)
     guarantee_block = "" if not GUARANTEE else (
         f'<p class="grt"><b>Our Guarantee.</b> {GUARANTEE}</p>')
     guarantee_faq = "" if not GUARANTEE else (
