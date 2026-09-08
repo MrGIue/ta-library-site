@@ -92,12 +92,12 @@
 
 /* the comet viewport — a dark window inside the light page, because an
    additive coma and tail only exist against darkness */
+/* No panel. Joe, 2026-09-08: "remove the square thing the motion graphic is in,
+   it kinda cuts off on the sides, so just put it directly on the page." The canvas
+   clears to the section's own colour and the composite fades to that same colour at
+   the edges, so the rectangle has no boundary to see. */
 .ta-lib .orbit { position: relative; width: 100%; aspect-ratio: 1;
-  max-width: clamp(430px,58vw,820px); margin-inline: auto;
-  border-radius: 26px; overflow: hidden; background: #06101F;
-  box-shadow: 0 30px 70px rgba(10,22,40,.28), 0 0 0 1px rgba(14,27,48,.10); }
-.ta-lib .orbit::after { content:''; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(86% 78% at 50% 46%, rgba(6,16,31,0) 58%, rgba(6,16,31,.55) 100%); }
+  max-width: clamp(430px,58vw,820px); margin-inline: auto; }
 .ta-lib .orbit canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .ta-lib .orbit .chip { position: absolute; z-index: 3; transform: translate(-50%,-50%);
   font-family: var(--head); font-size: 10.5px; font-weight: 700; letter-spacing: .06em;
@@ -145,8 +145,7 @@
 .ta-lib .ringband h2 em { font-style: italic; color: var(--accent); display: block; }
 .ta-lib .ringband > .wrap > .rgrid > div > p { margin-top: 20px; max-width: 46ch;
   font-size: clamp(16px,1.15vw,18px); }
-.ta-lib .ringband .orbit { max-width: clamp(400px,44vw,620px);
-  box-shadow: 0 30px 70px rgba(0,0,0,.45), 0 0 0 1px rgba(120,190,235,.14); }
+.ta-lib .ringband .orbit { max-width: clamp(430px,50vw,720px); }
 @media (max-width: 940px) {
   .ta-lib .ringband .rgrid { grid-template-columns: 1fr; gap: 34px; }
 }
@@ -787,6 +786,7 @@
   });
   if (!window.THREE) { cv.style.display = 'none'; return; }
 
+  var BG = 0x0A1628;                // --bg-deep, the ring band's background
   var DPR = Math.min(window.devicePixelRatio || 1, 2);
   // preserveDrawingBuffer only while recording. WebGL clears the drawing buffer
   // after compositing, so a screenshot taken between a manual draw and the next
@@ -798,10 +798,10 @@
     preserveDrawingBuffer: !!window.__ORBIT_FIXED_DT
   });
   renderer.setPixelRatio(DPR);
-  renderer.setClearColor(0x06101F, 1);
+  renderer.setClearColor(BG, 1);   // the .deep section's own ground, so the canvas has no edge
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(32, 1, 0.1, 120);
-  var TILT = 0.70, CAM_D = 17.2;
+  var TILT = 0.70, CAM_D = 19.0;
   camera.position.set(0, Math.sin(TILT) * CAM_D, Math.cos(TILT) * CAM_D);
   camera.lookAt(0, 0, 0);
 
@@ -1025,11 +1025,12 @@
   });
   var compMat = new THREE.ShaderMaterial({
     uniforms: { tBase: { value: null }, tGlow: { value: null },
-                uAmt: { value: 1.45 }, uFlash: { value: 0.0 } },
+                uAmt: { value: 1.45 }, uFlash: { value: 0.0 },
+                uBg: { value: new THREE.Color(BG) } },
     vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0); }',
     fragmentShader:
       'varying vec2 vUv; uniform sampler2D tBase; uniform sampler2D tGlow;' +
-      'uniform float uAmt; uniform float uFlash;' +
+      'uniform float uAmt; uniform float uFlash; uniform vec3 uBg;' +
       'void main(){ vec3 b = texture2D(tBase, vUv).rgb; vec3 g = texture2D(tGlow, vUv).rgb;' +
       ' vec3 c = b + g * uAmt;' +
       // the pulse that covers the loop point, brightest at the centre of the frame
@@ -1039,6 +1040,9 @@
       // near-black ground and turns the deep navy to slate
       ' vec3 over = max(vec3(0.0), c - vec3(1.0));' +
       ' c = min(c, vec3(1.0)) + over / (vec3(1.0) + over);' +
+      // dissolve into the page rather than stopping at the canvas boundary
+      ' float e = max(abs(vUv.x - 0.5), abs(vUv.y - 0.5)) * 2.0;' +
+      ' c = mix(c, uBg, smoothstep(0.78, 1.0, e));' +
       ' gl_FragColor = vec4(c, 1.0); }'
   });
 

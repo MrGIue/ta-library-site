@@ -48,8 +48,13 @@ active — 2026-09-07. Joe approved the current build: *"okay this is fucking GR
   526px wide at every width and `overflow-x: hidden` silently clipped it on a phone.
 - **What made v1 read flat**, so it is not repeated: flat ribbons at 12% opacity, no bloom at all,
   labels floating unconnected, and parts that faded in rather than landing. v2 answers each one.
-- **The comet needs a DARK viewport** inside the light page. A coma and a tail are additive light and do
-  not exist on white.
+- **The graphic sits DIRECTLY on the page, with no panel.** Joe, 2026-09-08: *"remove the square thing
+  the motion graphic is in, it kinda cuts off on the sides."* The canvas clears to the section's own
+  `--bg-deep` and the composite fades to that same colour toward the edges, measured on a SQUARE
+  distance so the fade completes on all four edges rather than only at the corners. Verified: every
+  pixel along the canvas boundary matches the section ground. **Do not give it a background, a radius,
+  a shadow or a CSS vignette again** — and if the band's background colour ever changes, `BG` in
+  `_ring.js` has to change with it.
 - Every number on the page is counted: 11 PDFs, **143 pages**, ~19¢ a page. Every proof quote is verbatim
   from `trainedadvisor.com/testimonials`, re-verified 2026-09-07.
 - **The free fallback must point OUTSIDE the eleven.** `FREE_URL` is `get-found-fast-guide`, one of the

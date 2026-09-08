@@ -64,6 +64,7 @@
   });
   if (!window.THREE) { cv.style.display = 'none'; return; }
 
+  var BG = 0x0A1628;                // --bg-deep, the ring band's background
   var DPR = Math.min(window.devicePixelRatio || 1, 2);
   // preserveDrawingBuffer only while recording. WebGL clears the drawing buffer
   // after compositing, so a screenshot taken between a manual draw and the next
@@ -75,10 +76,10 @@
     preserveDrawingBuffer: !!window.__ORBIT_FIXED_DT
   });
   renderer.setPixelRatio(DPR);
-  renderer.setClearColor(0x06101F, 1);
+  renderer.setClearColor(BG, 1);   // the .deep section's own ground, so the canvas has no edge
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(32, 1, 0.1, 120);
-  var TILT = 0.70, CAM_D = 17.2;
+  var TILT = 0.70, CAM_D = 19.0;
   camera.position.set(0, Math.sin(TILT) * CAM_D, Math.cos(TILT) * CAM_D);
   camera.lookAt(0, 0, 0);
 
@@ -302,11 +303,12 @@
   });
   var compMat = new THREE.ShaderMaterial({
     uniforms: { tBase: { value: null }, tGlow: { value: null },
-                uAmt: { value: 1.45 }, uFlash: { value: 0.0 } },
+                uAmt: { value: 1.45 }, uFlash: { value: 0.0 },
+                uBg: { value: new THREE.Color(BG) } },
     vertexShader: 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0); }',
     fragmentShader:
       'varying vec2 vUv; uniform sampler2D tBase; uniform sampler2D tGlow;' +
-      'uniform float uAmt; uniform float uFlash;' +
+      'uniform float uAmt; uniform float uFlash; uniform vec3 uBg;' +
       'void main(){ vec3 b = texture2D(tBase, vUv).rgb; vec3 g = texture2D(tGlow, vUv).rgb;' +
       ' vec3 c = b + g * uAmt;' +
       // the pulse that covers the loop point, brightest at the centre of the frame
@@ -316,6 +318,9 @@
       // near-black ground and turns the deep navy to slate
       ' vec3 over = max(vec3(0.0), c - vec3(1.0));' +
       ' c = min(c, vec3(1.0)) + over / (vec3(1.0) + over);' +
+      // dissolve into the page rather than stopping at the canvas boundary
+      ' float e = max(abs(vUv.x - 0.5), abs(vUv.y - 0.5)) * 2.0;' +
+      ' c = mix(c, uBg, smoothstep(0.78, 1.0, e));' +
       ' gl_FragColor = vec4(c, 1.0); }'
   });
 
