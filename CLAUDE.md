@@ -14,8 +14,8 @@ active — 2026-09-07. Joe approved the current build: *"okay this is fucking GR
 ## Key Files
 - `build.py` — the generator and EVERY constant. Change it and re-run.
 - `site/_template.html` — the source, with `<!--COMET-->` where the graphic goes.
-- `site/_comet2.js` — the hero graphic. build.py splices it at that anchor, so this file is the
-  only copy. `site/_orbit-lab.html?p=<preset>` renders it standalone for fast iteration.
+- `site/_ring.js` — the ring animation. build.py splices it at that anchor, so this file is the
+  only copy. `site/_orbit-lab.html` renders it standalone for fast iteration.
 - `site/index.html` — **GENERATED. Never hand-edit** (a hand fix is reverted by the next build).
 - `site/covers/` — the 11 covers, downscaled to 460px JPEG and embedded as data URIs.
 - `test/shot.mjs` — render + horizontal overflow at 320/390/1024/1440.
@@ -37,10 +37,15 @@ active — 2026-09-07. Joe approved the current build: *"okay this is fucking GR
 - **The graphic is an ASSEMBLY, not a collection.** Eleven arc segments float apart; a comet seats each
   in order until the ring closes and reads *One Complete System*. Joe rejected the collecting metaphor
   himself. The earlier rocket is retired — do not re-propose it.
-- **Deep Field is the chosen treatment**, picked 2026-09-07 from three rendered directions: Dial
-  (overhead instrument), Deep Field (tilted, cinematic) and Forge (parts land white-hot). All three
-  still build from the one engine; `PRESET` in build.py selects. The metaphor did not change — Joe's
-  note was *"that graphic isnt quite there, the quality and detail needs to be turned up."*
+- **The hero is STATIC and the animation lives lower down.** Joe, 2026-09-08: *"move the graphic down
+  further on the page, and replace the one at the top with something static - right now its to, like,
+  distracting at the top of the page."* The hero now carries the eleven covers fanned as one object;
+  the ring band sits after The Mechanism, which is the sentence it illustrates. **Do not put motion
+  back in the hero.**
+- **The fan is a fan, not a stack.** A receding stack looks richer and hides the count; the claim on
+  this page is ELEVEN, so every cover has to show an edge you can count. Its geometry is in `em` and
+  `.fan` sets one `font-size` clamp, so the whole composition scales off a single number. In px it was
+  526px wide at every width and `overflow-x: hidden` silently clipped it on a phone.
 - **What made v1 read flat**, so it is not repeated: flat ribbons at 12% opacity, no bloom at all,
   labels floating unconnected, and parts that faded in rather than landing. v2 answers each one.
 - **The comet needs a DARK viewport** inside the light page. A coma and a tail are additive light and do

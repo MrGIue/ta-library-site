@@ -73,6 +73,39 @@ def data_uri(slug: str) -> str:
         sys.exit(f"missing cover: {p}")
     return "data:image/jpeg;base64," + base64.b64encode(p.read_bytes()).decode()
 
+def fan() -> str:
+    """The eleven covers as one fanned object, for the hero.
+
+    A receding stack would look richer and hide the count. The claim on this page
+    is ELEVEN, so a reader has to be able to count eleven spines. Hence a fan:
+    every cover shows an edge, the middle one sits upright and in front, and the
+    outer ones rotate and dip away along a shallow arc.
+
+    Static by Joe's instruction, 2026-09-08: the animated ring at the top was
+    "distracting", so it moved down the page and this took its place.
+    """
+    # Every offset is in em, and .fan sets its own font-size from a clamp, so the
+    # whole composition scales fluidly with the viewport off one number. In px it
+    # was 526px wide at every width and got clipped by overflow-x on a phone.
+    out = []
+    mid = (len(GUIDES) - 1) / 2
+    for i, (slug, title, _stage, _line) in enumerate(GUIDES):
+        d = i - mid                              # -5 .. +5
+        rot = d * 3.1
+        x = d * 3.2
+        y = (d * d) * 0.136 - 0.96
+        z = len(GUIDES) - abs(round(d))
+        sc = 1 - abs(d) * 0.014
+        style = (f"transform:translate({x:.2f}em,{y:.2f}em) rotate({rot:.1f}deg) "
+                 f"scale({sc:.3f});z-index:{z}")
+        # Only the front cover carries alt text. The other ten are the same object
+        # seen edge-on, and ten near-identical descriptions is noise in a screen
+        # reader, not information.
+        alt = f"The eleven guides in the Trained Advisor Library, fanned out" if i == round(mid) else ""
+        out.append(f'<img src="{data_uri(slug)}" alt="{alt}" width="460" height="595" '
+                   f'style="{style}" loading="eager" decoding="async">')
+    return "\n          ".join(out)
+
 def cards() -> str:
     out = []
     for i, (slug, title, stage, line) in enumerate(GUIDES, 1):
@@ -99,6 +132,7 @@ def cards() -> str:
 def main() -> None:
     html = TEMPLATE.read_text(encoding="utf-8")
     html = html.replace("<!--GUIDE_CARDS-->", cards())
+    html = html.replace("<!--FAN-->", fan())
     graphic = "\n".join(["<script>", RING.read_text(encoding="utf-8"), "</script>"])
     html = html.replace("<!--COMET-->", graphic)
     guarantee_block = "" if not GUARANTEE else (
