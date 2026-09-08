@@ -75,6 +75,6 @@ active — 2026-09-07. Joe approved the current build: *"okay this is fucking GR
    `trainedadvisor.com/pay/guide-bundle`, a 404. It is the older build of this same offer. Kill it
    or redirect it before the new page goes up.
 4. **Stripe receipts reply to tyson@trainedadvisor.com**, so refund requests land with him.
-3. Wire analytics. A conversion page that cannot be measured cannot be optimised.
-4. The remaining items from the original brief: privacy, terms, sitemap, robots, custom 404, form
+5. Wire analytics. A conversion page that cannot be measured cannot be optimised.
+6. The remaining items from the original brief: privacy, terms, sitemap, robots, custom 404, form
    validation, spam protection.
